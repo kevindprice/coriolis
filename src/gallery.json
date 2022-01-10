@@ -1,0 +1,15 @@
+{
+	"gallery": [
+	  {
+		"number": 1,
+		"text":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean bibendum, risus nec viverra tincidunt,",
+		"diameter":50,
+		"speed":14,
+		"angle":0,
+		"startheight":4,
+		"gravity":100,
+		"units":"ft",
+		"playback":100
+	  }
+  ]
+}

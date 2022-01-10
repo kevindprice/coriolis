@@ -1,38 +1,727 @@
-.App {
-  text-align: center;
+
+
+/* ======= General Page Organization ======== */
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+#App {
+	text-align: center;
+	height:100vh;
+	/*overflow:hidden;*/
+	
+	/*hidden overflow not necessary b/c starparent does that already.
+	NOT hiding it allows me to stop pointless scrolling away the topbar on mobile*/
+	
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.navbar{
+	width:100%;
+	font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+	height:35px;
+	background-color: #858383;
+	color:#9dfcdb;
+	font-size:24px;
+	line-height:35px;
+	cursor:default;
+	box-shadow:0 0 5px rgba(0,0,0,.8);
+	position:relative;
+	z-index:1;
+	margin-top:-2px;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.tallCanvas {
+	  overflow:hidden;
+	  height:42vh;
+	  position:relative;
+	  border-radius:5px;
 }
 
-.App-link {
-  color: #61dafb;
+#wideBuffer {
+	width:2vw;
+	display:inline-block;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+#tallBuffer {
+	height:1vh;
 }
+
+.wideCanvas {
+	overflow:hidden;
+	display:inline-block;
+	height:80vh;
+	width:47.5%;
+	position:relative;
+	border-radius:5px;
+}
+
+/*otherwise the stuff on top of it won't show up*/
+.canvasParent { z-index:-1;}
+
+
+/* ======= Bottom Buttons ======== */
+
+.button {
+	margin-top:5px;
+	padding:10px;
+	position:relative;
+	border-radius:10px;
+	z-index: 2;
+	cursor:pointer;
+	font-size:0.95em;
+	display:inline-block;
+	/*box-shadow:0 0 10px rgba(0,0,0,.8);	*/
+}
+
+#FreezeButton {
+	background: blue;
+	color:white;
+	margin-right:10px;
+}
+
+#FreezeButton:active, #FreezeButton:hover {
+	background:#081a57; 
+}
+
+#referenceLink {
+	background-color:#e02e0b;
+	color:white;
+}
+
+#referenceLink:active, #referenceLink:hover {
+	background-color:#610707;
+}
+
+#rightMenuButton { float:right; margin-right:30px; background:white;}
+#leftMenuButton { float:left; margin-left:30px; background:white;}
+
+#rightMenuButton:active, #rightMenuButton:hover, #leftMenuButton:active, #leftMenuButton:hover {
+	background:#a9b2d4;	
+}
+
+
+
+
+/* ======= SIDEBAR ====== */
+
+/*when the menu opens, this is the resized page*/
+.pageShrunkForBurger {
+	position:absolute;
+	left:315px;
+	right:0px;
+	height:100vh;
+}
+
+/* Position and sizing of burger button */
+.left-button, .right-button {
+  position: fixed;
+  width: 50px;
+  height: 30px;
+  z-index:2!important;
+  background-color:white;
+  border-radius:4px;
+}
+
+/* Color/shape of burger icon bars */
+.bm-burger-bars { display:none; }
+.bm-burger-button { display:none; }
+
+/* Color/shape of close button cross */
+.bm-cross {
+  background: #bdc3c7;
+}
+
+.bm-menu-wrap {
+	/*overflow-y:hidden;*/
+	width:315px!important;
+	z-index:3!important;
+}
+
+#CenteredLeftMenu {
+	width:271px; /*smaller than what it contains*/
+	margin: 0 auto;
+}
+
+.bm-menu-left, .bm-menu-right { background: #505359; font-size: 1.05em; }
+
+.swipearea {
+	width:100%;
+	height:95vh;
+}
+
+.bm-menu-left {
+  padding: 0.5em 0em 0em 0em;
+  /*padding: 0em;*/
+  
+}
+
+.bm-menu-right {
+  padding: 0.5em 0em 0em 0em;
+  overflow-x: hidden!important;
+}
+
+/* Morph shape necessary with bubble or elastic */
+.bm-morph-shape {
+  fill: #505359;
+}
+
+/* Wrapper for item list */
+.bm-item-list {
+  margin:0 auto;
+  color: #b8b7ad;
+  height:initial!important;
+}
+
+/* Styling of overlay */
+.bm-overlay {
+  background: rgba(0, 0, 0, 0)!important;  /*0.3);*/
+}
+
+
+
+
+/* ======= Input Menu ======== */
+
+input:invalid {  background-color: #ffdddd; }
+
+/*the typeable text inputs in the log. inputs menu*/
+.InputStyle {
+	font-size:17px;
+	padding:1px 3px;
+	width:80px;
+}
+
+/*130px works in Chrome, but looks terrible in FireFox.*/
+.slider{ 
+	width:124px; 
+}
+
+.slider:hover{ cursor:grab; }
+.slider:active { cursor:grabbing; }
+
+/*the tan units bubbles in the input menu*/
+.UnitsStyle {
+	display:inline-block;
+	padding:2px 5px 4px 5px;
+	background-color:#ffefdb;
+	width:25px;
+	font-size:17px;
+	color:#000000;
+	border-radius:4px;
+}
+
+/*a row in the input menu, with a blue border*/
+.InputBox {
+	text-align:left;
+	width:281px;
+	border-bottom:1px dotted blue;
+	margin-bottom:10px;
+	padding-bottom:10px;
+
+
+	/*margin-right:-10px;*/
+}
+
+/*white range values above a slider in input menu*/
+.range {
+	font-size:11px;
+	color:white;
+}
+
+/*"Height coin reaches if thrown on Earth"*/
+.randomFact{
+	font-size:14px;
+	width:125px;
+	color:#adccff;
+	padding: 0px 2px;
+	display:inline-block;
+}
+
+/*Imperial (feet)  or  Metric (meters)*/
+.RadioBox {	font-size:15px;	text-align:center; margin-left:-5px;}
+.RadioBox input { cursor:pointer; }
+.unitselector { cursor:pointer; }
+
+.ResetButton {
+	display:inline-block;
+	background-color: #4CAF50; /* Green */
+	border: none;
+	color: white;
+	padding: 10px 20px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+	border-radius: 5px;
+	margin-top:20px;
+	cursor:pointer;
+	width:125px;
+}
+
+/*color for the variables displayed to the right of the checkboxes*/
+.displayVar { color:#adccff; }
+
+
+/* ============== Custom radio buttons in input menu ================ */
+/* from https://www.w3schools.com/howto/howto_css_custom_checkbox.asp */
+
+
+/* Customize the label (the container) */
+.checkcontainer {
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 20px;
+  text-align:left;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Hide the browser's default radio button */
+.checkcontainer input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom radio button */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: #eee;
+  border-radius: 50%;
+}
+
+/* On mouse-over, add a grey background color */
+.checkcontainer:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+
+/* When the radio button is checked, add a blue background */
+.checkcontainer input:checked ~ .checkmark {
+  background-color: #2196F3;
+}
+
+/* Create the indicator (the dot/circle - hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the indicator (dot/circle) when checked */
+.checkcontainer input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the checkmark/indicator */
+.checkcontainer .checkmark:after {
+  left: 9px;
+  top: 5px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+/* Use this instead for a radio button. (dot/circle)
+.checkcontainer .checkmark:after {
+ 	top: 9px;
+	left: 9px;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: white;
+} */
+
+
+/* ======= Stats Menu ======== */
+
+#outeroutputtable { font-size: 0.8em; color: black; border:1px solid #000; text-align:center; background-color:white; border-radius:5px; width:290px; padding:5px 0px; margin:0 auto;}
+#innertable { border-collapse:separate; border-spacing:10px 0px; }
+.border_bottom td { border-bottom:1px solid #000; }
+.redcolor { color:#CE0D45; }
+.bluecolor { color:#2F329F; }
+.borderright { text-align:right; border-right: 1px solid #000; vertical-align:middle; padding-top:7px; padding-bottom:7px; padding-right:10px; }
+.output1 { /*text-align:right;*/ vertical-align:bottom; margin-bottom:0px; display:inline-block; }
+#boldrow { font-weight:bold; }
+.secondtable {border-collapse:separate; border-bottom:1px dotted blue; border-spacing:3px 11px; margin:0em 0em 0em 0.6em; padding-bottom:.4em;}
+#radiospeed { margin: 10px 0px 10px 8px; font-size: 1em; color:#adbdff;}
+#innertable2 { border-collapse:separate; border-spacing:8px 0px; }
+.leftoutput { width:200px; color:#adbdff;  }
+.border_bottom2 td { border-bottom:1px solid #000; color:#2F329F; font-weight:bold;}
+.conditionalBreak { line-height:15px; }
+.conditionalBreak1 { /*line-height:15px;*/ line-height:7px; }
+.bm-menu a { color:#4287f5;}
+
+
+/* =========The Popup message, "About this page"===========*/
+
+
+	/*gray background behind the popup message*/
+.popupoverlay {
+	position: fixed;
+	z-index: 3;
+	width: 100%;
+	height: 100%;
+	top:0px;
+	left:0px;
+	background: rgba(0, 0, 0, 0.3);
+	opacity: 1;
+}
+	/*the popup bubble itself*/
+#popup {
+	width: 700px;
+	z-index:6;
+	position:fixed;
+	top: 5vh;
+	width:400px;
+	
+	left:50%;
+	transform: translate(-50%, 0);
+	background-color:white;
+	border: 1px solid black;
+	border-radius:20px;
+	box-shadow:0 0 10px rgba(0,0,0,.8);
+	z-index:5;
+	padding:20px;
+	text-align:left;
+}
+
+/* Position and sizing of clickable cross button */
+			/*.bm-cross-button*/
+/*.crossIcon { 
+  height: 25px!important;
+  width: 25px!important;
+  background-color:#f44242;
+  border-radius:3px;
+  z-index:5;
+  box-shadow:4px 4px 8px rgba(200,0,0,3);
+  position:absolute;
+  top:10px!important;
+  right:15px!important;
+}*/
+
+
+
+/* ======= Star Background ======== */
+
+#starsparent {
+	position:absolute;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+	overflow:hidden;
+}
+
+#frozenstars {
+	background:url(img/stars.jpg) repeat top center;
+	position:absolute;
+	display:block;
+	z-index:-5;
+	/*  -webkit-animation-play-state: paused;
+      -moz-animation-play-state: paused;
+      -o-animation-play-state: paused;
+      animation-play-state: paused; */
+}
+
+#tempcenter {
+	position:relative;
+	width:3px;
+	height:3px;
+	background-color:red;
+	z-index:20;
+}
+		
+#stars {
+	background:url(img/stars.jpg) repeat top center;
+	position:absolute;
+	display:block;
+	z-index:-5;
+}
+
+/*Show stars at: Slow speed (5%)*/
+.starForm{
+	position:absolute;
+	top:5px;
+	right:10px;
+	font-size:0.9em;
+	background-color:white;
+	border-radius: 2px;
+	margin:2px;
+	padding-left:2px;
+}
+
+#starDropdown {
+	cursor:pointer;
+}
+
+
+/*  -moz-animation:move-stars-back 400s linear infinite;
+  -ms-animation:move-stars-back 400s linear infinite;
+  -o-animation:move-stars-back 400s linear infinite;
+  -webkit-animation:move-stars-back 400s linear infinite;
+  animation:move-stars-back 400s linear infinite; */
+					
+/*No longer using these, but don't remove in case I want to use them later*/
+/*@keyframes move-stars-back {
+    from {background-position:0 0;}
+    to {background-position:10000px 0;}
+}
+@-webkit-keyframes move-stars-back {
+    from {background-position:0 0;}
+    to {background-position:10000px 0;}
+}
+@-moz-keyframes move-stars-back {
+    from {background-position:0 0;}
+    to {background-position:10000px 0;}
+}
+@-ms-keyframes move-stars-back {
+    from {background-position: 0;}
+    to {background-position:10000px 0;}
+}*/					
+
+
+
+/* ======= Etcetera ======== */
+
+/*anything that needs to be centered*/
+.centered { margin: 0 auto; display:inline-block;}
+
+.hide { display:none; }
+
+/*Remove the useless {0} value bubble in Edge browser.*/
+::-ms-tooltip { display: none; }
+
+
+/*the "difference from landing on Earth" text*/
+.diffnotice{
+	/*position:absolute;
+	bottom:0px;
+	right:5px;
+	z-index:2;*/
+	font-weight:bold;
+	color:#9dfcdb;
+	text-align:center;
+	margin-top:10px;
+}
+
+.diffnoticesmall{  /*changes in mobile...but is the same here*/
+	position:absolute;
+	bottom:0px;
+	right:5px;
+	z-index:2;
+	font-weight:bold;
+	color:#9dfcdb;
+}
+
+/* "Scale in feet" */
+.scale{
+	text-align:left;
+	/*position:relative;*/
+	position:absolute;
+	/*top:-23px;*/
+	bottom:3px;
+	left:12px;
+	z-index:2;
+	/*left:10px;*/
+	font-weight:bold;
+	/*color:#098f5f; dark green*/
+	color:#9dfcdb; /*bright/lime green*/
+	/*color:#adbdff; /*sky blue*/
+	/*color:#007acc; color of the floor*/
+}
+
+/*"On Earth" and "On a 50 ft station"*/
+.overlaytext { 
+	position:absolute;
+	display:inline-block;
+	top:10px;
+	left:10px;
+	color:#098f5f;
+	font-weight:bold;
+	/*background-color:white;*/
+	border-radius:2px;
+	padding:2px;
+}
+
+/*the playback speed text and slider*/
+#playback {
+	font-size:0.9em;
+	position:absolute;
+	top:10px;
+	right:10px;
+	width:160px;
+}
+
+.starLabel {
+	position:absolute;
+	bottom:5px;
+	right:10px;
+	color:#adbdff;
+}
+
+
+/* ============================================================= */
+/* ======== Responsive Design / Alternate Screen Sizes ========= */
+/* ============================================================= */
+
+
+/* =========== Elements affected by burger menu opening ======== */
+
+@media screen and ( max-width: 850px ){
+	
+	.pageShrunkForBurger .starForm {width: 135px; top:0px; right:0px; padding:0px;}
+	.pageShrunkForBurger .diffnoticesmall { font-size: 0.8em;}
+	.pageShrunkForBurger .button { padding:3.5px; font-weight:initial; font-size:.8em;}
+	.pageShrunkForBurger #leftMenuButton { margin-left: 5px;}
+	.pageShrunkForBurger #rightMenuButton { margin-right: 5px;}
+}
+
+@media screen and ( max-width: 750px ){
+
+	.pageShrunkForBurger .navbar {
+		height:25px;
+		font-size:17px;
+		line-height:25px;
+	}
+}
+
+@media screen and ( max-height: 775px ){
+	.tallCanvas {
+		height:40vh;
+	}
+}
+
+/*Mobile screens tend to have things like
+title bars, etc that shrink the size "seen."
+I do not want the titlebar to scroll, because it seems glitchy. 
+Shorten the menus to fit on mobile screens.*/
+@media screen and ( max-height: 670px ){
+	#App{ height: 80vh;} /*I don't want it to scroll on mobile! It's awkward*/
+	/*#popupcontent { height:420px; }*/
+	#popup h1 {		margin-block-start: 0em!important;
+					margin-block-end: 0em!important;	}
+	.tallCanvas {
+		height:38vh;
+	}
+	
+	.diffnotice{ margin-top: 5px; }
+	
+	.swipearea { height:initial!important; }
+
+	.secondtable {padding-bottom:0px;}
+	.navbar {
+		height:25px;
+		font-size:17px;
+		line-height:25px;
+	}
+
+	#scaleunits { top:30px; left:10px;}
+	
+	
+	
+	#page-wrap { border:none; }
+
+	.bm-menu h3 {
+		margin-top:7px;
+		margin-bottom:7px;
+	}	
+	
+	.bm-menu {
+	  padding-top: 0em!important;
+	  padding-bottom:0em!important;
+	}
+	
+	.InputBox { /*margin-top:13px; */
+				margin-top:9px;
+				padding-top:8px;
+				font-size:.9em; }
+		
+	.ResetButton {
+		background-color: #4CAF50; /* Green */
+		border: none;
+		color: white;
+		padding: 7px 15px;
+		text-align: center;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 14px;
+		border-radius: 5px;
+		margin-top:10px;
+	}
+	
+	#radiospeed { margin: 5px 0px 5px 8px; }
+	#secondtable { font-size:0.9em;  border-spacing: 5px 8px; margin-bottom:8px; padding-bottom:0px; }
+	.conditionalBreak { line-height:0px; display:none;}
+	.conditionalBreak1 { line-height:0px; display:none;}
+	
+}
+
+
+/* Mobile phones in portrait mode */
+@media (max-width: 500px)
+{
+	#popup { width:85vw; top:2vh; }
+	
+	 /*good for portrait mode or docked window*/
+	.starForm {width: 135px; top:0px; right:0px; padding:0px;}
+	.diffnoticesmall { font-size: 0.8em;}
+	.button { padding:3.5px; font-weight:initial; font-size:.8em;}
+	#leftMenuButton { margin-left: 5px;}
+	#rightMenuButton { margin-right: 5px;}
+
+	#FreezeButton { margin-right:0px; }
+	
+	.navbar {
+		height:25px;
+		font-size:17px;
+		line-height:25px;
+	}
+}
+
+/*On landscape media screens, allow the titlebar to scroll away 
+ (unfortunately only works in Chrome mobile) */
+@media screen and ( max-height: 450px ){
+	#popup { width:90vw; top:1vh; height:70vh;}
+	.starForm {width: 105px!important; top:0px;} /*good for landscape mode*/
+	#popupcontent { height: 50vh; overflow:scroll; }
+	.wideCanvas { height: 65vh;}
+	.button { padding:5px; font-weight:initial; font-size:.95em;}
+
+	#outer-container { height:100vh; overflow:initial; }
+
+	.wideCanvas .diffnotice {font-size:0.8em;}
+	.diffnoticesmall { font-size: 0.7em;}
+}
+
+/*the buttons are too big. Fix them.*/
+@media screen and (max-width: 530px) and (min-width: 500px) {
+	.button {padding:6px;}
+}
+
+/*fix a sizing glitch on a docked window*/
+@media screen and (max-width: 820px) {
+	.wideCanvas .starForm { width:135px; right:0px; padding:0px;}
+}
+
+  /*for laptops with a docked window showing a tall/skinny browser*/
+@media screen and (max-width:750px)
+{ .wideCanvas .diffnotice {font-size:0.8em;} }
+
