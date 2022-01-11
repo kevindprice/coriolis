@@ -137,7 +137,7 @@ body {
 .bm-menu-wrap {
 	/*overflow-y:hidden;*/
 	width:315px!important;
-	z-index:3!important;
+	z-index:1500!important;
 }
 
 #CenteredLeftMenu {
@@ -155,7 +155,6 @@ body {
 .bm-menu-left {
   padding: 0.5em 0em 0em 0em;
   /*padding: 0em;*/
-  
 }
 
 .bm-menu-right {
@@ -178,7 +177,6 @@ body {
 /* Styling of overlay */
 .bm-overlay {
   background: rgba(0, 0, 0, 0)!important;  /*0.3);*/
-  z-index:3!important;
 }
 
 

@@ -249,7 +249,7 @@ class App extends Component {
 
 			//...event listener for window size
 			window.addEventListener('resize', () => { 	
-				if( window.innerWidth>window.innerHeight && this.state.pageShape === "tall") 
+				if( window.innerWidth>=window.innerHeight && this.state.pageShape === "tall") 
 					{  this.setState({pageShape:"wide"}) }
 				else if(window.innerWidth<window.innerHeight && this.state.pageShape === "wide")
 					{  this.setState({pageShape:"tall"})} 
@@ -820,7 +820,7 @@ class App extends Component {
 	//it also has an option to scale, but that doesn't work, 
 			//and I don't want to 'scale' everything, just reshape it.
 	var burgerPageClass = ""
-	var leftMenu
+	var leftMenu  
 	var innerMenu = (<LeftMenu 
 					convertunits = {this.convertunits}
 					updateState = {this.updateState}
@@ -835,7 +835,7 @@ class App extends Component {
 					galleryText = {Gallery.samples[this.state.sampleNum].text}
 					vars = {EncapsulatedInput}
 				/>)
-				
+				//if the page doesn't shrink, then clicking outside the menu should close.
 	if(this.state.menuLeftOpen && this.state.shouldShiftForBurger) { 
 	burgerPageClass="pageShrunkForBurger" 	
 		var leftMenu = 	(
