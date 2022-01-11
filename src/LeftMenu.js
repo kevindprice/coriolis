@@ -39,7 +39,6 @@ props:
 are passed down by props from App.js
 
 */
-var textBlock="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean bibendum, risus nec viverra tincidunt,"
 
 class LeftMenu extends Component {
 

@@ -230,7 +230,7 @@ class App extends Component {
 			this.resizeObserver.disconnect();
 		}
 		
-		var starsanimation = null;
+		starsanimation = null;
 	}
 	
 

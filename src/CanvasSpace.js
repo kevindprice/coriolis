@@ -86,7 +86,7 @@ class CanvasSpace extends Component {
 			this.resizeObserver.disconnect();
 		}
 		
-		var timeouts = {
+		timeouts = {
 			//moveinterval : null,
 			movetimeout: null,
 			repeattimeout : null,
