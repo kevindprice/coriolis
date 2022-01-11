@@ -820,8 +820,45 @@ class App extends Component {
 	//it also has an option to scale, but that doesn't work, 
 			//and I don't want to 'scale' everything, just reshape it.
 	var burgerPageClass = ""
-	if(this.state.menuLeftOpen && this.state.shouldShiftForBurger) { burgerPageClass="pageShrunkForBurger" }
-	
+	var leftMenu
+	var innerMenu = (<LeftMenu 
+					convertunits = {this.convertunits}
+					updateState = {this.updateState}
+					updateDiameter = {this.updateDiameter}
+					setDefaultState = {this.setDefaultState}
+					closeMenus = {this.closeMenus}
+					leftFunction = {this.leftArrow}
+					rightFunction = {this.rightArrow}
+					showLeftCursor = {(this.state.sampleNum > 0)}
+					showRightCursor = {(this.state.sampleNum < Gallery.samples.length - 1)}
+					
+					galleryText = {Gallery.samples[this.state.sampleNum].text}
+					vars = {EncapsulatedInput}
+				/>)
+				
+	if(this.state.menuLeftOpen && this.state.shouldShiftForBurger) { 
+	burgerPageClass="pageShrunkForBurger" 	
+		var leftMenu = 	(
+				<Menu 
+				noOverlay
+				isOpen={ this.state.menuLeftOpen } //second condition prevents extra render
+				onStateChange={ (e) => { if(e.isOpen===false && this.state.menuLeftOpen ){ this.closeMenus() } } } 
+				menuClassName={ "bm-menu-left" }>
+					{innerMenu}	
+				</Menu>)
+		}
+		else
+		{
+			var leftMenu = 	(
+				<Menu  
+				isOpen={ this.state.menuLeftOpen } //second condition prevents extra render
+				onStateChange={ (e) => { if(e.isOpen===false && this.state.menuLeftOpen ){ this.closeMenus() } } } 
+				menuClassName={ "bm-menu-left" }>
+					{innerMenu}
+			</Menu>)
+		}
+
+
 
 return (
 
@@ -830,27 +867,7 @@ return (
 		<div id={frozenstars}></div>
 	</div>
 
-	<Menu 
-		noOverlay 
-		isOpen={ this.state.menuLeftOpen } //second condition prevents extra render
-		onStateChange={ (e) => { if(e.isOpen===false && this.state.menuLeftOpen ){ this.closeMenus() } } } 
-		menuClassName={ "bm-menu-left" }>
-
-		<LeftMenu 
-			convertunits = {this.convertunits}
-			updateState = {this.updateState}
-			updateDiameter = {this.updateDiameter}
-			setDefaultState = {this.setDefaultState}
-			closeMenus = {this.closeMenus}
-			leftFunction = {this.leftArrow}
-			rightFunction = {this.rightArrow}
-			showLeftCursor = {(this.state.sampleNum > 0)}
-			showRightCursor = {(this.state.sampleNum < Gallery.samples.length - 1)}
-			
-			galleryText = {Gallery.samples[this.state.sampleNum].text}
-			vars = {EncapsulatedInput}
-		/>
-	</Menu>
+	{leftMenu}
 
 	<Menu 
 		right 
