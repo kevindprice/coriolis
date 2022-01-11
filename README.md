@@ -19,13 +19,9 @@ The code in the src folder is divided into these segments that run the page:
 
 I have a few ideas for potential future improvements to this website.
 
-1. The associated article, linked in the model (https://kevindprice.github.com/coriolis/ideas) has a page with interesting throws or ideas of things to do with the model. I believe the website would be more engaging if this were moved onto the model page itself, into a clickable gallery. There would be left and right arrows with a small text explanation for each setting, and you could click through the different settings and learn about the Coriolis effect more easily, instead of burying it in an article sub-link. This would make it easier to make sense of the model.
+1. Add a social aspect somewhere?
 
-2. Add a social aspect somewhere?
-
-3. Make a setting to view the throw from an inertial reference frame.
-
-4. Add a Google analytics tag to monitor web traffic.
+2. Make a setting to view the throw from an inertial reference frame.
 
 ### Tools from Create React App
 
