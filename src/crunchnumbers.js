@@ -42,7 +42,7 @@ export function crunchnumbers( inputvalues )
 	
 	var expectedheight
 	var expectedtime
-	
+		
 	if(relative_v_y > 0)  //was thrown upwards
 	{			
 		//var expectedheight = height_start + height_thrown; //works out exactly the same for case throw "up"

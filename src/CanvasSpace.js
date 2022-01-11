@@ -10,6 +10,14 @@ import './App.css';
 import imagefile from './img/silhouette.png'
 import image2 from './img/silhouette2.png'
 
+//Flow:
+	//ComponentDidMount --> LoadImage --> UpdateCanvasSize --> setState --> shouldComponentUpdate --> componentDidUpdate --> setDimensions, draw the canvas, etc
+
+//When props change, the main happenings take place at componentDidUpdate, which decides how much of the canvas to rerender, and rerenders it.
+
+//The math that orients a point on the screen can be found in RelativePoint()
+
+
 //If ResizeObserver isn't supported to my liking...
 //then there is react-resize-observer import which could do the same thing.
 
@@ -77,6 +85,14 @@ class CanvasSpace extends Component {
 		if(this.resizeObserver){
 			this.resizeObserver.disconnect();
 		}
+		
+		var timeouts = {
+			//moveinterval : null,
+			movetimeout: null,
+			repeattimeout : null,
+			sourceready: false,
+			delayrefresh: null,
+		}			
 	}
 	
 	componentDidMount()
@@ -91,8 +107,6 @@ class CanvasSpace extends Component {
 		else { window.addEventListener('resize', () => { this.updateCanvasSize(); });}
 		//If no ResizeObserver, then the browser doesn't shift for the burger menu.
 		//But ResizeObserver has wide support :-)
-		
-		
 		
 		//window.addEventListener('resize', () => { this.updateCanvasSize(); });
 
@@ -210,10 +224,10 @@ class CanvasSpace extends Component {
 			namesp.currentframe = Math.floor((namesp.currentframe / oldlength) * namesp.canvaspoints.length); //
 			this.draw_canvas_partial()
 		}
-		else if(prevProps.vars.percenttime != this.props.vars.percenttime)
-		{
+		/*else if(prevProps.vars.percenttime != this.props.vars.percenttime)
+		{//removed b/c what if you change the percenttime as well as something else? It glitches.
 			this.restart_interval()
-		}
+		}*/
 		else if( (this.props.vars.menuLeftOpen!==prevProps.vars.menuLeftOpen) || (this.props.vars.menuRightOpen!==prevProps.vars.menuRightOpen))
 		{
 			this.setDimensions()			//shape of canvas has changed.

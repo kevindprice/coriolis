@@ -12,7 +12,7 @@ import { processQueryVariables } from './processQueries.js'
 import OutputMenu from './OutputMenu.js'
 
 import LeftMenu from "./LeftMenu"
-
+import Gallery from "./gallery.json"
 
 //If ResizeObserver isn't supported to my liking...
 //then there is react-resize-observer import which could do the same thing,
@@ -67,6 +67,9 @@ var defaultQuery = {  //constructor sets the values
 	speed: null,
 	percenttime: null,
 }
+
+
+
 
 					//animation has to be global so I can stop it
 					//from a different function from which it was called.
@@ -125,7 +128,10 @@ class App extends Component {
 			anglefromVertical: queryValues.anglefromVertical,
 			speed: queryValues.speed,
 			percenttime: queryValues.percenttime,
-			accel_earth: queryValues.accel_earth,		  
+			accel_earth: queryValues.accel_earth,
+						//either 32ft/s or 9.8 m/s	  
+			
+			sampleNum: 0,
 			
 			menuLeftOpen: queryValues.leftMenu,
 			menuRightOpen: queryValues.rightMenu,
@@ -140,12 +146,12 @@ class App extends Component {
 			//burgerFlag: false, //flag for canvases to rerender when the menu opens
 
 			//vars from number crunching
-			expectedtime : answers.expectedtime,
+			expectedtime : answers.expectedtime,   //time on earth
 			expectedheight: answers.expectedheight,
 			standingvelocity: answers.standingvelocity,
 			omega: answers.omega,
 			maxheight: answers.maxheight,
-			time: answers.time,
+			time: answers.time,				//time on space station
 			slope: answers.slope,
 			total_difference: answers.total_difference,
 				//starting speed of coin with standing speed incorporated
@@ -187,12 +193,16 @@ class App extends Component {
 		this.toggleRightMenu = this.toggleRightMenu.bind(this);
 		this.closeMenus = this.closeMenus.bind(this);
 		this.togglePopUp = this.togglePopUp.bind(this);
+		this.leftArrow = this.leftArrow.bind(this);
+		this.rightArrow = this.rightArrow.bind(this);
 		
 			 //get the dimensions of the page as it is shrunk by the burger menu
 			 //(not the window.innerWidth or innerHeight dimension)
 		this.burgerPageRef = React.createRef();
-		this.resizeObserver = null;		
+		this.resizeObserver = null;
 	}
+	
+	
 	
 	observe = RO => {
 		this.resizeObserver = new RO(entries => {
@@ -219,6 +229,8 @@ class App extends Component {
 		if(this.resizeObserver){
 			this.resizeObserver.disconnect();
 		}
+		
+		var starsanimation = null;
 	}
 	
 
@@ -514,6 +526,7 @@ class App extends Component {
 	//Thus this field gets its own handling function.
 	updateDiameter(value, variable)
 	{
+		console.log("HI")
 		if(this.state.diameter !== value)
 		{
 			if(value < this.state.startheight) {
@@ -540,7 +553,59 @@ class App extends Component {
 		}
 	}
 
-	
+	leftArrow() {
+		if(this.state.sampleNum > 0)
+		{
+			var defaultValues 
+			if(	Gallery.samples[this.state.sampleNum-1].units === "ft" )
+			{
+				defaultValues = defaultImperial;
+			} else	{
+				defaultValues = defaultMetric;
+			}
+			
+			this.setState({
+				sampleNum: this.state.sampleNum - 1,
+				diameter: Gallery.samples[this.state.sampleNum-1].diameter,
+				speed: Gallery.samples[this.state.sampleNum-1].speed,
+				anglefromVertical: Gallery.samples[this.state.sampleNum-1].angle,
+				startheight: Gallery.samples[this.state.sampleNum-1].startheight,
+				percentgravity: Gallery.samples[this.state.sampleNum-1].percentgravity,
+				units: Gallery.samples[this.state.sampleNum-1].units,
+				percenttime: Gallery.samples[this.state.sampleNum-1].percenttime,
+				
+				accel_earth: defaultValues.accel_earth,
+				defaults: defaultValues
+ 			  }, ()=>{this.updateOtherVars();} ) 	
+		}	
+	}
+
+	rightArrow() {
+		if(this.state.sampleNum < Gallery.samples.length - 1)
+		{	
+			var defaultValues 
+			if(	Gallery.samples[this.state.sampleNum+1].units === "ft" )
+			{
+				defaultValues = defaultImperial;
+			} else	{
+				defaultValues = defaultMetric;
+			}
+
+			this.setState({sampleNum: this.state.sampleNum + 1,
+				diameter: Gallery.samples[this.state.sampleNum+1].diameter,
+				speed: Gallery.samples[this.state.sampleNum+1].speed,
+				anglefromVertical: Gallery.samples[this.state.sampleNum+1].angle,
+				startheight: Gallery.samples[this.state.sampleNum+1].startheight,
+				percentgravity: Gallery.samples[this.state.sampleNum+1].percentgravity,
+				units: Gallery.samples[this.state.sampleNum+1].units,
+				percenttime: Gallery.samples[this.state.sampleNum+1].percenttime,
+				
+				accel_earth: defaultValues.accel_earth,
+				defaults: defaultValues
+			}, ()=>{this.updateOtherVars();} ) 
+		}
+	}
+ 	
 	updateOtherVars()  //crunch the numbers and save answers to state
 	{	
 		var encapsulatedCrunch={
@@ -553,6 +618,8 @@ class App extends Component {
 		}
 
 		var answers = crunchnumbers(encapsulatedCrunch)
+
+		//console.log(answers.expectedtime)
 		
 		this.setState({
 			expectedtime : answers.expectedtime,
@@ -603,7 +670,8 @@ class App extends Component {
 	togglePopUp() {
 		this.setState( {PopUpOpen: !(this.state.PopUpOpen)} )
 	}
- 
+	
+
 	
   render() {
 	//var shape	//is the window tall or wide? (based on event listener to state)
@@ -774,7 +842,12 @@ return (
 			updateDiameter = {this.updateDiameter}
 			setDefaultState = {this.setDefaultState}
 			closeMenus = {this.closeMenus}
+			leftFunction = {this.leftArrow}
+			rightFunction = {this.rightArrow}
+			showLeftCursor = {(this.state.sampleNum > 0)}
+			showRightCursor = {(this.state.sampleNum < Gallery.samples.length - 1)}
 			
+			galleryText = {Gallery.samples[this.state.sampleNum].text}
 			vars = {EncapsulatedInput}
 		/>
 	</Menu>
@@ -939,7 +1012,7 @@ class PopUp extends Component{
 			<p>This page models motion on a space station that spins to produce gravity.</p>
 			<p>No one has ever built a spinning space station before. Life on such a space station would be different from our experience.</p>
 			<p>Objects move differently in a spinning environment due to a phenomenon called the Coriolis effect. If you were to toss something in the air, it would not land where you expect it to. This model demonstrates that toss for you.</p>
-			<p>You can change the toss by pressing the "Edit the Throw" button. <a href={window.articleUrl +'/ideas'}>This link</a> also generates some interesting throws to help you learn more about it.</p>
+			<p>You can change the toss in the left menu. Try clicking through the gallery of throws found there to learn more.</p>
 		</div>
 		
 		<div style={{textAlign:'center'}}>

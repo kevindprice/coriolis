@@ -7,6 +7,10 @@
 //may explain how it works here as well.
 //This file still functions the same as that one in most ways.
 
+//Flow:
+	//ComponentDidMount --> LoadImage --> UpdateCanvasSize --> setState --> shouldComponentUpdate --> componentDidUpdate --> setDimensions, draw the canvas, etc
+//When props change, the main happenings take place at componentDidUpdate, which decides how much of the canvas to rerender, and rerenders it.
+
 
 import React, { Component } from 'react';
 import './App.css';
@@ -79,6 +83,14 @@ class CanvasEarth extends Component {
 		if(this.resizeObserver){
 			this.resizeObserver.disconnect();
 		}
+		
+		var timeouts = {
+			//moveinterval : null,
+			movetimeout: null,
+			repeattimeout : null,
+			sourceready: false,
+			delayrefresh: null,
+		}			
 	}
 
 	
@@ -94,19 +106,13 @@ class CanvasEarth extends Component {
 		else { window.addEventListener('resize', () => { this.updateCanvasSize(); });}
 		//If no ResizeObserver, then the browser doesn't shift for the burger menu.
 		//But ResizeObserver has wide support :-)
-		
-
-
-
-
-		//		
 
 		this.loadImage() //calls updateCanvasSize when image is ready
 						//(otherwise image won't render at start)
 						//which then updates state, triggering draw onto canvas
 						//in componentDidUpdate
 	}
-	
+
 	
 	loadImage()
 	{
@@ -135,6 +141,7 @@ class CanvasEarth extends Component {
 		const width = (canvasParent.clientWidth)
 		const height = (canvasParent.clientHeight)
 		this.setState({ width:width, height:height })
+		
 	}
 	
 
@@ -203,6 +210,7 @@ class CanvasEarth extends Component {
 	//based on what changed.
 	componentDidUpdate(prevProps, prevState)
 	{
+		
 		if(		this.props.vars.startheight!==prevProps.vars.startheight ||
 				this.props.vars.speed!==prevProps.vars.speed ||
 				this.props.vars.units!==prevProps.vars.units)
@@ -219,10 +227,10 @@ class CanvasEarth extends Component {
 			namesp.currentframe = Math.floor((namesp.currentframe / oldlength) * namesp.canvaspoints.length); //
 			this.draw_canvas_partial()
 		}
-		else if(prevProps.vars.percenttime !== this.props.vars.percenttime)
-		{
+		/*else if(prevProps.vars.percenttime !== this.props.vars.percenttime)
+		{  //removed b/c what if you change the percenttime as well as something else? It glitches.
 			this.restart_interval()
-		}
+		}*/
 		else if( (this.props.vars.menuLeftOpen!==prevProps.vars.menuLeftOpen) || (this.props.vars.menuRightOpen!==prevProps.vars.menuRightOpen))
 		{
 			this.setDimensions()

@@ -523,10 +523,10 @@ input:invalid {  background-color: #ffdddd; }
 }
 
 .diffnoticesmall{  /*changes in mobile...but is the same here*/
-	position:absolute;
+	/*position:absolute;
 	bottom:0px;
 	right:5px;
-	z-index:2;
+	z-index:2;*/
 	font-weight:bold;
 	color:#9dfcdb;
 }
@@ -666,6 +666,7 @@ Shorten the menus to fit on mobile screens.*/
 		border-radius: 5px;
 		margin-top:10px;
 	}
+	.RadioBox{margin-bottom:-10px;}
 	
 	#radiospeed { margin: 5px 0px 5px 8px; }
 	#secondtable { font-size:0.9em;  border-spacing: 5px 8px; margin-bottom:8px; padding-bottom:0px; }

@@ -5,8 +5,8 @@ import ReactTouchEvents from "react-touch-events";
 import InputField from './InputField'
 import AngleInput from './AngleInput'
 
-// import leftarrow from "./img/left-arrow.png"
-// import rightarrow from "./img/right-arrow.png"
+import leftarrow from "./img/left-arrow.png"
+import rightarrow from "./img/right-arrow.png"
 
 /*
 props:
@@ -39,6 +39,7 @@ props:
 are passed down by props from App.js
 
 */
+var textBlock="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean bibendum, risus nec viverra tincidunt,"
 
 class LeftMenu extends Component {
 
@@ -79,6 +80,14 @@ render() {
 	{
 		seconddiameter = round(this.props.vars.diameter/1000); seconddiameterunits=" km across";
 	}
+	
+	var cursorLeft = "pointer"
+	if(!this.props.showLeftCursor)
+	{cursorLeft = "initial"}
+
+	var cursorRight = "pointer"
+	if(!this.props.showRightCursor)
+	{cursorRight = "initial"}
 	
 
 	//The input fields that appear if the user selects their checkmark
@@ -209,9 +218,15 @@ render() {
 <br/>
 <br/>
 
+<div>
+<img src={leftarrow} alt="Leftarrow" width="30" style={{verticalAlign:"middle",cursor:cursorLeft}}  onClick={ this.props.leftFunction }/>
+<div style={{verticalAlign:"middle", width:"200px", display:"inline-block"}}>{this.props.galleryText}</div>
+<img src={rightarrow} alt="Rightarrow" width="30" style={{verticalAlign:"middle",cursor:cursorRight}}  onClick={ this.props.rightFunction }/>
+</div>
 
 
-<h4 style={{marginBlockEnd:'0.7em'}}>Links</h4>
+
+<br/>
   <div style={{lineHeight:'1.25em'}}>
 	Read <a href={window.articleUrl}>the associated article</a><br/>
 	<a href={window.articleUrl+'/ideas'}>Interesting throws</a> for this model<br/>
@@ -256,3 +271,7 @@ function round(num, places) {
 }
 
 export default LeftMenu;
+
+
+
+//<h4 style={{marginBlockEnd:'0.7em'}}>Links</h4>
