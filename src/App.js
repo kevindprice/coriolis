@@ -214,12 +214,12 @@ class App extends Component {
 				//bottom,
 				//left
 			} = entries[0].contentRect;
-			
 			//this.setState({ width, height })
+			//the 20 is because switching actually changes the page size. It glitches otherwise.
 			if(typeof width !== 'undefined'){				
-				if( width>height && this.state.pageShape === "tall") 
+				if( width>=height+20 && this.state.pageShape === "tall") 
 					{  this.setState({pageShape:"wide"}) }
-				else if(width<height && this.state.pageShape === "wide")
+				else if(width<height-20 && this.state.pageShape === "wide")
 					{  this.setState({pageShape:"tall"})}
 			}
 		});
@@ -250,15 +250,15 @@ class App extends Component {
 			//...event listener for window size
 			window.addEventListener('resize', () => { 	
 				if( window.innerWidth>=window.innerHeight && this.state.pageShape === "tall") 
-					{  this.setState({pageShape:"wide"}) }
+					{  this.setState({pageShape:"wide"}); }
 				else if(window.innerWidth<window.innerHeight && this.state.pageShape === "wide")
-					{  this.setState({pageShape:"tall"})} 
+					{  this.setState({pageShape:"tall"}); } 
 			});
 		}
 
 		//if the window is less than 600 px wide, then don't squish the page for the menu.
 		window.addEventListener('resize', () => {
-			if(this.state.shouldShiftForBurger && window.innerWidth < 600)
+			if(this.state.shouldShiftForBurger && window.innerWidth <= 600)
 			{ this.setState({shouldShiftForBurger:false}) }
 			if(!this.state.shouldShiftForBurger && window.innerWidth > 600 && "ResizeObserver" in window)
 			{ this.setState({shouldShiftForBurger:true}) }
