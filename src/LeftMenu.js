@@ -228,7 +228,6 @@ render() {
 <br/>
   <div style={{lineHeight:'1.25em'}}>
 	Read <a href={window.articleUrl}>the associated article</a><br/>
-	<a href={window.articleUrl+'/ideas'}>Interesting throws</a> for this model<br/>
 	<a href={window.articleUrl+'/math'}>The math</a> behind this model<br/>
 	<a href={'https://www.github.com/kevindprice/coriolis'}>The code</a> behind this model<br/>
   </div>
@@ -272,5 +271,5 @@ function round(num, places) {
 export default LeftMenu;
 
 
-
+//	<a href={window.articleUrl+'/ideas'}>Interesting throws</a> for this model<br/>
 //<h4 style={{marginBlockEnd:'0.7em'}}>Links</h4>

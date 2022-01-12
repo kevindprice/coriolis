@@ -375,7 +375,7 @@ input:invalid {  background-color: #ffdddd; }
 	/*gray background behind the popup message*/
 .popupoverlay {
 	position: fixed;
-	z-index: 3;
+	z-index: 1700;
 	width: 100%;
 	height: 100%;
 	top:0px;
@@ -386,7 +386,7 @@ input:invalid {  background-color: #ffdddd; }
 	/*the popup bubble itself*/
 #popup {
 	width: 700px;
-	z-index:6;
+	z-index:2000;
 	position:fixed;
 	top: 5vh;
 	width:400px;
@@ -397,7 +397,6 @@ input:invalid {  background-color: #ffdddd; }
 	border: 1px solid black;
 	border-radius:20px;
 	box-shadow:0 0 10px rgba(0,0,0,.8);
-	z-index:5;
 	padding:20px;
 	text-align:left;
 }
