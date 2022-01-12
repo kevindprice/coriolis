@@ -31,7 +31,7 @@
 		"percenttime":100
 	  },
 	  {
-		"text":"Dropped from almost the center of the station, as if from a tall ladder",
+		"text":"Dropped from almost (not quite) the center of the station, as if from a tall ladder",
 		"diameter":50,
 		"speed":0,
 		"angle":0,
@@ -71,7 +71,7 @@
 		"percenttime":100
 	  },
  	  {
-		"text":"Throwing it against the rotation counteracts the gravity and causes it to stretch out.",
+		"text":"Throwing it opposite the rotation counteracts the gravity and causes it to stretch out.",
 		"diameter":50,
 		"speed":14,
 		"angle":90,
@@ -121,17 +121,7 @@
 		"percenttime":100
 	  },
 	  {
-		"text":"Increasing the throw speed and changing the angle increases the distortion dramatically (596 m).",
-		"diameter":1000000,
-		"speed":500,
-		"angle":89,
-		"startheight":1.2,
-		"percentgravity":100,
-		"units":"m",
-		"percenttime":100
-	  },
-	  {
-		"text":"By launching a high-speed object at different angles, you see unexpected shapes (fast playback speed)",
+		"text":"By launching a high-speed object on a huge station, you still see unexpected shapes.",
 		"diameter":1000000,
 		"speed":500,
 		"angle":10,
@@ -141,7 +131,7 @@
 		"percenttime":2000
 	  },
 	  {
-		"text":"Launching straight up at high speed, the object would land several kilometers away.",
+		"text":"Launching straight up at high speed, the object would land several kilometers away (fast playback speed).",
 		"diameter":1000000,
 		"speed":500,
 		"angle":0,
