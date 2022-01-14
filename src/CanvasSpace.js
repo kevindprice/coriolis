@@ -12,10 +12,9 @@ import image2 from './img/silhouette2.png'
 
 //Flow:
 	//ComponentDidMount --> LoadImage --> UpdateCanvasSize --> setState --> shouldComponentUpdate --> componentDidUpdate --> setDimensions, draw the canvas, etc
+//When props change, the flow begins at componentDidUpdate, which decides how much of the canvas to rerender, and rerenders it.
 
-//When props change, the main happenings take place at componentDidUpdate, which decides how much of the canvas to rerender, and rerenders it.
-
-//The math that orients a point on the screen can be found in RelativePoint()
+//*** The math that orients a point on the screen can be found in RelativePoint() ***
 
 
 //If ResizeObserver isn't supported to my liking...

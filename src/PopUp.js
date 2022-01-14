@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import './App.css';
 
 
+//this is the popup that displays when the page is opened, or the "About this page" button is pressed
+
 class PopUp extends Component{
 	render() {
 	
@@ -18,7 +20,7 @@ class PopUp extends Component{
 			<h1>About This Page</h1>
 		</div>
 		<div id="popupcontent">
-			<p>This page models motion on a space station that spins to produce gravity.</p>
+			<p>This page models motion on a space station that spins to produce gravity. You see a toss from the perspective of a spinning person.</p>
 			<p>No one has ever built a spinning space station before. Life on such a space station would be different from our experience.</p>
 			<p>Objects move differently in a spinning environment due to a phenomenon called the Coriolis effect. If you were to toss something in the air, it would not land where you expect it to. This model demonstrates that toss for you.</p>
 			<p>You can change the toss in the left menu. Try clicking through the gallery of throws found there to learn more.</p>

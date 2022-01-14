@@ -9,7 +9,7 @@
 
 //Flow:
 	//ComponentDidMount --> LoadImage --> UpdateCanvasSize --> setState --> shouldComponentUpdate --> componentDidUpdate --> setDimensions, draw the canvas, etc
-//When props change, the main happenings take place at componentDidUpdate, which decides how much of the canvas to rerender, and rerenders it.
+//When props change, the flow begins at componentDidUpdate, which decides how much of the canvas to rerender, and rerenders it.
 
 
 import React, { Component } from 'react';

@@ -318,7 +318,7 @@ class App extends Component {
 		  accel_earth:defaults.accel_earth,
 		  standingvelocity: Math.sqrt( defaults.accel_earth * defaults.diameter/2),
 		  omega: Math.sqrt( defaults.accel_earth / (defaults.diameter/2) ),
-		  sampleNum: 0,
+		  sampleNum: 0,  //resets the gallery to the initial position
 		  //droppedflag: false,
 		}, ()=>{this.updateOtherVars();} )
 		
@@ -451,6 +451,7 @@ class App extends Component {
 		}
 	}
 
+	//freeze button, freeze or unfreeze
 	freeze()
 	{
 		if (this.state.frozen===false) { //e.g. before it switches to true
@@ -463,7 +464,7 @@ class App extends Component {
 		this.setState( {frozen: !this.state.frozen} )  
 	}
 	
-	
+	//switch between metric and imperial units
 	convertunits(e)
 	{	
 		if(e.target.value !== this.state.units)
@@ -554,6 +555,7 @@ class App extends Component {
 		}
 	}
 
+	//The left arrow button in the gallery on the left menu
 	leftArrow() {
 		if(this.state.sampleNum > 0)
 		{
@@ -581,6 +583,7 @@ class App extends Component {
 		}	
 	}
 
+	//The right arrow button in the gallery on the left menu
 	rightArrow() {
 		if(this.state.sampleNum < Gallery.samples.length - 1)
 		{	
@@ -822,6 +825,7 @@ class App extends Component {
 			//and I don't want to 'scale' everything, just reshape it.
 	var burgerPageClass = ""
 	var leftMenu  
+	
 	var innerMenu = (<LeftMenu 
 					convertunits = {this.convertunits}
 					updateState = {this.updateState}
@@ -836,13 +840,16 @@ class App extends Component {
 					galleryText = {Gallery.samples[this.state.sampleNum].text}
 					vars = {EncapsulatedInput}
 				/>)
-				//if the page doesn't shrink, then clicking outside the menu should close.
+				
+	//if the page doesn't shrink, then clicking outside the menu should close.
+	//Otherwise, react-burger-menu only does one or the other, which is why it is loaded here.
+	//(so I can change the noOverlay setting, which I otherwise could not change)
 	if(this.state.menuLeftOpen && this.state.shouldShiftForBurger) { 
 	burgerPageClass="pageShrunkForBurger" 	
 		var leftMenu = 	(
 				<Menu 
 				noOverlay
-				isOpen={ this.state.menuLeftOpen } //second condition prevents extra render
+				isOpen={ this.state.menuLeftOpen } //second if-condition prevents extra render
 				onStateChange={ (e) => { if(e.isOpen===false && this.state.menuLeftOpen ){ this.closeMenus() } } } 
 				menuClassName={ "bm-menu-left" }>
 					{innerMenu}	
@@ -852,7 +859,7 @@ class App extends Component {
 		{
 			var leftMenu = 	(
 				<Menu  
-				isOpen={ this.state.menuLeftOpen } //second condition prevents extra render
+				isOpen={ this.state.menuLeftOpen } //second if-condition prevents extra render
 				onStateChange={ (e) => { if(e.isOpen===false && this.state.menuLeftOpen ){ this.closeMenus() } } } 
 				menuClassName={ "bm-menu-left" }>
 					{innerMenu}
@@ -973,7 +980,7 @@ function round(num, places) {
 	return output;	
 }
 
-
+//convert a number between feet and meters
 function convertfeetmet(value, fromunit, tounit)
 {
 	if(fromunit==="ft" && tounit==="m")
@@ -990,7 +997,7 @@ function to_feet(meters)			//The inverse calculates to more decimals...
 { return meters * 3.2808333333 }
 
 
-
+//format a number nicely for display on the screen
 function format(num)
 {
 	num = round(num)
