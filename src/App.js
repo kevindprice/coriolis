@@ -34,7 +34,7 @@ window.articleUrl = "http://kevindprice.github.io/coriolis"
 //Note: these are also present in processQueries.js.
 	//If you edit them here, then make sure you edit them there too!
 var defaultImperial = {
-	diameter:50,
+	diameter:100,
 	startheight:4,
 	units:"ft",
 	percentgravity:100,
@@ -46,7 +46,7 @@ var defaultImperial = {
 }
 
 var defaultMetric = {
-	diameter: 15, //15.24,
+	diameter: 30, //15.24,
 	startheight: 1.2,  //1.219,
 	units:"m",
 	percentgravity:100,
@@ -371,7 +371,7 @@ class App extends Component {
 				
 			//sets the stars size dynamically (below) up to 8 times the screen size.
 			//(divides by 2, because you only need half of it to be > than diagonal)
-			if(window.innerWidth*8/2 > diagonal && window.innerHeight*8/2 > diagonal)
+			if(window.innerWidth*12/2 > diagonal && window.innerHeight*12/2 > diagonal)
 			{
 				//the exact size the stars need to be to cover the screen while spinning.
 				//(don't waste resources in spinning something bigger than necessary)
@@ -528,7 +528,6 @@ class App extends Component {
 	//Thus this field gets its own handling function.
 	updateDiameter(value, variable)
 	{
-		console.log("HI")
 		if(this.state.diameter !== value)
 		{
 			if(value < this.state.startheight) {
@@ -634,7 +633,7 @@ class App extends Component {
 			maxheight: answers.maxheight,
 			//x_f : answers.x_f,
 			//y_f : answers.y_f,
-			time: answers.time,
+			time: answers.time < 0 ? 0 : answers.time,
 			slope: answers.slope,
 			total_difference: answers.total_difference,
 			//directionleft: answers.directionleft,
@@ -912,7 +911,7 @@ return (
 
 		<div className={showStarForm}>Show stars at:&nbsp;
 			<select id="starDropdown" value={this.state.starSpeed} onChange={(e) => this.updateStarSpeed(e.target.value) }>
-				<option value={5}>Slow speed (5%)</option>
+				<option value={10}>Slow speed (10%)</option>
 				<option value={100}>True speed (100%)</option>
 			</select>
 		</div>

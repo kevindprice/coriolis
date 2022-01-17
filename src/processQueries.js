@@ -28,7 +28,7 @@
 //Note: these are also present in App.js.
 	//If you edit them here, then make sure you edit them there too!
 var defaultImperial = {
-	diameter:50,
+	diameter:100,
 	startheight:4,
 	units:"ft",
 	percentgravity:100,
@@ -40,7 +40,7 @@ var defaultImperial = {
 }
 
 var defaultMetric = {
-	diameter: 15, //15.24,
+	diameter: 30, //15.24,
 	startheight: 1.2,  //1.219,
 	units:"m",
 	percentgravity:100,

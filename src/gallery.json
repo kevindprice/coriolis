@@ -2,7 +2,7 @@
 	"samples": [
 	  {
 		"text":"A simple coin toss does not appear as it would on Earth.",
-		"diameter":50,
+		"diameter":100,
 		"speed":14,
 		"angle":0,
 		"startheight":4,
@@ -12,7 +12,7 @@
 	  },
 	  {
 		"text":"Dropping the coin causes it to curve the other way.",
-		"diameter":50,
+		"diameter":100,
 		"speed":0,
 		"angle":0,
 		"startheight":4,
@@ -22,7 +22,7 @@
 	  },
 	  {
 		"text":"A drop in low gravity looks exactly the same, but slower",
-		"diameter":50,
+		"diameter":100,
 		"speed":0,
 		"angle":0,
 		"startheight":4,
@@ -32,29 +32,29 @@
 	  },
 	  {
 		"text":"Dropped from almost (not quite) the center of the station, as if from a tall ladder",
-		"diameter":50,
+		"diameter":100,
 		"speed":0,
 		"angle":0,
-		"startheight":24.5,
+		"startheight":49,
 		"percentgravity":100,
 		"units":"ft",
 		"percenttime":100
 	  },
 	  {
 		"text":"Dropping it from the exact center of the station causes it to never land.",
-		"diameter":50,
+		"diameter":100,
 		"speed":0,
 		"angle":0,
-		"startheight":25,
+		"startheight":50,
 		"percentgravity":100,
 		"units":"ft",
 		"percenttime":100
 	  },
 	  {
 		"text":"A toss at this angle causes it to loop back on itself",
-		"diameter":50,
+		"diameter":100,
 		"speed":14,
-		"angle":25,
+		"angle":16,
 		"startheight":4,
 		"percentgravity":100,
 		"units":"ft",
@@ -62,9 +62,9 @@
 	  },
 		  {
 		"text":"At this angle it comes to a point instead of the parabola you would see on Earth.",
-		"diameter":50,
+		"diameter":100,
 		"speed":14,
-		"angle":36,
+		"angle":23,
 		"startheight":4,
 		"percentgravity":100,
 		"units":"ft",
@@ -72,8 +72,8 @@
 	  },
  	  {
 		"text":"Throwing it opposite the rotation counteracts the gravity and causes it to stretch out.",
-		"diameter":50,
-		"speed":14,
+		"diameter":100,
+		"speed":23,
 		"angle":90,
 		"startheight":4,
 		"percentgravity":100,
@@ -82,8 +82,8 @@
 	  },
 	  {
 		"text":"If you match the rotation speed almost exactly, the object will spin in the air perpetually.",
-		"diameter":50,
-		"speed":23.81,
+		"diameter":100,
+		"speed":37,
 		"angle":90,
 		"startheight":4,
 		"percentgravity":100,
@@ -92,8 +92,8 @@
 	  },
 	  {
 		"text":"Changing the throw angle by a degree causes it to spiral upwards.",
-		"diameter":50,
-		"speed":23.823,
+		"diameter":100,
+		"speed":37,
 		"angle":89,
 		"startheight":4,
 		"percentgravity":100,
@@ -102,7 +102,7 @@
 	  },
 	  {
 		"text":"If you throw it fast enough, it will hit the ceiling.",
-		"diameter":50,
+		"diameter":100,
 		"speed":150,
 		"angle":0,
 		"startheight":4,
@@ -142,8 +142,8 @@
 	  },
 	  {
 		"text":"Playing with artificial gravity can be fun!",
-		"diameter":50,
-		"speed":24,
+		"diameter":100,
+		"speed":37,
 		"angle":80,
 		"startheight":4,
 		"percentgravity":100,

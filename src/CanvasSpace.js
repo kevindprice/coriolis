@@ -297,7 +297,7 @@ class CanvasSpace extends Component {
 	update_all_points()
 	{
 		var relativepoints = getRelativePoints(this.props.vars.slope, this.props.vars.time, this.props.vars.radius, this.props.vars.omega, this.props.vars.startheight, this.props.vars.start_v_x, this.props.vars.start_v_y, this.props.vars.percenttime)
-		
+
 		//update namespace now that I have new relativepoints
 		namesp.minmaxes = minmax(relativepoints, namesp.dimensions)
 		namesp.relativepoints = relativepoints
