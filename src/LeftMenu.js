@@ -217,7 +217,7 @@ render() {
 <br/>
 <br/>
 
-<div>
+<div style={{border:"3px solid black", borderRadius:"5px", paddingTop:"5px", paddingBottom:"5px"}}>
 <img src={leftarrow} alt="Leftarrow" width="30" style={{verticalAlign:"middle",cursor:cursorLeft}}  onClick={ this.props.leftFunction }/>
 <div style={{verticalAlign:"middle", width:"200px", display:"inline-block"}}>{this.props.galleryText}</div>
 <img src={rightarrow} alt="Rightarrow" width="30" style={{verticalAlign:"middle",cursor:cursorRight}}  onClick={ this.props.rightFunction }/>

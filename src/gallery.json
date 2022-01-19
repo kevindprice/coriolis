@@ -121,24 +121,24 @@
 		"percenttime":100
 	  },
 	  {
-		"text":"By launching a high-speed object on a huge station, you still see unexpected shapes.",
+		"text":"By launching at a high speed relative to the huge station, you still see unexpected shapes.",
 		"diameter":1000000,
-		"speed":500,
-		"angle":10,
+		"speed":300,
+		"angle":6,
 		"startheight":1.2,
 		"percentgravity":100,
 		"units":"m",
-		"percenttime":2000
+		"percenttime":1000
 	  },
 	  {
-		"text":"Launching straight up at high speed, the object would land several kilometers away (fast playback speed).",
+		"text":"If launched straight up at high speed, the object could land several kilometers away.",
 		"diameter":1000000,
-		"speed":500,
+		"speed":300,
 		"angle":0,
 		"startheight":1.2,
 		"percentgravity":100,
 		"units":"m",
-		"percenttime":2000
+		"percenttime":1000
 	  },
 	  {
 		"text":"Playing with artificial gravity can be fun!",
