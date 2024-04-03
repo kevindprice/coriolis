@@ -26,7 +26,7 @@ import Gallery from "./gallery.json"
 
 		//article url is global so I can define it here for every part of the app.
 //window.articleUrl = "http://localhost:4000"
-window.articleUrl = "http://kevindprice.github.io/coriolis"
+window.articleUrl = "https://coriolis-station-article.netlify.app"
 
 //Defaults set as namespaces. 
 //Can push reset in input menu to return to these default values.

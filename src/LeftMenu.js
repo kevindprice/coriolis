@@ -227,7 +227,7 @@ render() {
 
 <br/>
   <div style={{lineHeight:'1.25em'}}>
-	Read <a href={window.articleUrl}>the associated article</a><br/>
+	Read <a href={window.articleUrl+'/intro'}>the associated article</a><br/>
 	<a href={window.articleUrl+'/math'}>The math</a> behind this model<br/>
 	<a href={'https://www.github.com/kevindprice/coriolis'}>The code</a> behind this model<br/>
   </div>
