@@ -3,7 +3,6 @@
 import React, { Component } from 'react';
 import './App.css';
 
-import ReactTouchEvents from "react-touch-events";
 
 class OutputMenu extends Component {
 	
@@ -98,7 +97,9 @@ class OutputMenu extends Component {
 
 		return( 
 
-<ReactTouchEvents swipeTolerance={80} tapTolerance={70} onSwipe={ (e) => { if(e==="right") { this.props.closeMenus() } } }><div className="swipearea">
+<div className="swipearea"
+	onTouchStart={(e) => { this._touchStartX = e.touches[0].clientX; }}
+	onTouchEnd={(e) => { if (e.changedTouches[0].clientX - this._touchStartX > 80) { this.props.closeMenus(); } }}>
 
 		
 <div id="outputbox"><h3>Statistics</h3>
@@ -171,7 +172,7 @@ class OutputMenu extends Component {
 </div>
 
 
-</div></ReactTouchEvents>
+</div>
 
 		);
 

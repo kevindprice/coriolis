@@ -129,15 +129,63 @@ body {
 .bm-burger-bars { display:none; }
 .bm-burger-button { display:none; }
 
-/* Color/shape of close button cross */
+/* Close button (X) at top of drawer */
+.bm-cross-button {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  width: 24px;
+  height: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 1;
+}
+
 .bm-cross {
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 3px;
+  height: 14px;
   background: #bdc3c7;
+  border-radius: 2px;
+}
+
+.bm-cross:first-child {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.bm-cross:last-child {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.bm-cross-button:hover .bm-cross {
+  background: #ffffff;
 }
 
 .bm-menu-wrap {
-	/*overflow-y:hidden;*/
-	width:315px!important;
-	z-index:1500!important;
+	position: fixed;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 315px !important;
+	z-index: 1500 !important;
+	transform: translateX(-100%);
+	transition: transform 0.3s ease;
+	overflow-y: auto;
+}
+
+.bm-menu-wrap--right {
+	left: auto;
+	right: 0;
+	transform: translateX(100%);
+}
+
+.bm-menu-wrap--open {
+	transform: translateX(0);
 }
 
 #CenteredLeftMenu {
@@ -145,7 +193,7 @@ body {
 	margin: 0 auto;
 }
 
-.bm-menu-left, .bm-menu-right { background: #505359; font-size: 1.05em; }
+.bm-menu-left, .bm-menu-right { background: #505359; font-size: 1.05em; position: relative; }
 
 .swipearea {
 	width:100%;
@@ -366,7 +414,7 @@ input:invalid {  background-color: #ffdddd; }
 .border_bottom2 td { border-bottom:1px solid #000; color:#2F329F; font-weight:bold;}
 .conditionalBreak { line-height:15px; }
 .conditionalBreak1 { /*line-height:15px;*/ line-height:7px; }
-.bm-menu a { color:#4287f5;}
+.bm-menu-left a, .bm-menu-right a { color:#4287f5; }
 
 
 /* =========The Popup message, "About this page"===========*/
@@ -637,14 +685,14 @@ Shorten the menus to fit on mobile screens.*/
 	
 	#page-wrap { border:none; }
 
-	.bm-menu h3 {
+	.bm-menu-left h3, .bm-menu-right h3 {
 		margin-top:7px;
 		margin-bottom:7px;
-	}	
-	
-	.bm-menu {
-	  padding-top: 0em!important;
-	  padding-bottom:0em!important;
+	}
+
+	.bm-menu-left, .bm-menu-right {
+		padding-top: 0em !important;
+		padding-bottom: 0em !important;
 	}
 	
 	.InputBox { /*margin-top:13px; */

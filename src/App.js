@@ -3,7 +3,6 @@
 import React, { Component } from 'react';
 import './App.css';
 
-import { slide as Menu } from 'react-burger-menu'
 import CanvasEarth from './CanvasEarth'
 import CanvasSpace from './CanvasSpace'
 import PlayBack from './PlayBack'
@@ -78,6 +77,25 @@ var starsanimation = null;
 
 //capture the page object from the ref *once*. Doing multiple times is crashy.
 var burgerPageObject = null;
+
+function SideDrawer({ isOpen, right, menuClassName, onClose, children }) {
+	const classes = ['bm-menu-wrap',
+		right ? 'bm-menu-wrap--right' : '',
+		isOpen ? 'bm-menu-wrap--open' : '',
+	].filter(Boolean).join(' ');
+	return (
+		<div className={classes}>
+			<div className={menuClassName}>
+				<button className="bm-cross-button" onClick={onClose} aria-label="Close menu">
+					<span className="bm-cross" /><span className="bm-cross" />
+				</button>
+				<div className="bm-item-list">
+					{children}
+				</div>
+			</div>
+		</div>
+	);
+}
 
 class App extends Component {
 						 //process query variables ////////////
@@ -840,30 +858,13 @@ class App extends Component {
 					vars = {EncapsulatedInput}
 				/>)
 				
-	//if the page doesn't shrink, then clicking outside the menu should close.
-	//Otherwise, react-burger-menu only does one or the other, which is why it is loaded here.
-	//(so I can change the noOverlay setting, which I otherwise could not change)
-	if(this.state.menuLeftOpen && this.state.shouldShiftForBurger) { 
-	burgerPageClass="pageShrunkForBurger" 	
-		var leftMenu = 	(
-				<Menu 
-				noOverlay
-				isOpen={ this.state.menuLeftOpen } //second if-condition prevents extra render
-				onStateChange={ (e) => { if(e.isOpen===false && this.state.menuLeftOpen ){ this.closeMenus() } } } 
-				menuClassName={ "bm-menu-left" }>
-					{innerMenu}	
-				</Menu>)
-		}
-		else
-		{
-			var leftMenu = 	(
-				<Menu  
-				isOpen={ this.state.menuLeftOpen } //second if-condition prevents extra render
-				onStateChange={ (e) => { if(e.isOpen===false && this.state.menuLeftOpen ){ this.closeMenus() } } } 
-				menuClassName={ "bm-menu-left" }>
-					{innerMenu}
-			</Menu>)
-		}
+	if(this.state.menuLeftOpen && this.state.shouldShiftForBurger) {
+		burgerPageClass="pageShrunkForBurger";
+	}
+	var leftMenu = (
+		<SideDrawer isOpen={ this.state.menuLeftOpen } menuClassName="bm-menu-left" onClose={ this.closeMenus }>
+			{innerMenu}
+		</SideDrawer>);
 
 
 
@@ -876,18 +877,13 @@ return (
 
 	{leftMenu}
 
-	<Menu 
-		right 
-		noOverlay 
-		isOpen={ this.state.menuRightOpen } //second condition prevents extra render
-		onStateChange={(e) => { if(e.isOpen===false && this.state.menuRightOpen ){ this.closeMenus() } } }  
-		menuClassName={ "bm-menu-right" }>
-			<OutputMenu 
-				menuOpen={this.state.menuRightOpen} 
-				closeMenus={this.closeMenus} 
-				vars={EncapsulatedOutput}
-			/>
-	</Menu>
+	<SideDrawer right isOpen={ this.state.menuRightOpen } menuClassName="bm-menu-right" onClose={ this.closeMenus }>
+		<OutputMenu
+			menuOpen={this.state.menuRightOpen}
+			closeMenus={this.closeMenus}
+			vars={EncapsulatedOutput}
+		/>
+	</SideDrawer>
 	
 
 <div id="bm-page-wrap" className={burgerPageClass} ref={this.burgerPageRef}>
