@@ -11,6 +11,7 @@ import { processQueryVariables } from './processQueries.js'
 import OutputMenu from './OutputMenu.js'
 
 import LeftMenu from "./LeftMenu"
+import StarCanvas from "./StarCanvas"
 import PopUp from "./PopUp"
 import Gallery from "./gallery.json"
 
@@ -73,8 +74,6 @@ var defaultQuery = {  //constructor sets the values
 
 					//animation has to be global so I can stop it
 					//from a different function from which it was called.
-var starsanimation = null; 
-
 //capture the page object from the ref *once*. Doing multiple times is crashy.
 var burgerPageObject = null;
 
@@ -160,7 +159,10 @@ class App extends Component {
 
 			starSpeed: 5,  //percent speed of stars
 			showStarForm: true,	//show the star speed dropdown menu
-			canvasStarData: null,
+			starCenterX: null,
+			starCenterY: null,
+			starDuration: 0,
+			starLargeStation: false,
 			defaults: queryValues.defaults,
 			//burgerFlag: false, //flag for canvases to rerender when the menu opens
 
@@ -248,8 +250,6 @@ class App extends Component {
 		if(this.resizeObserver){
 			this.resizeObserver.disconnect();
 		}
-		
-		starsanimation = null;
 	}
 	
 
@@ -304,11 +304,7 @@ class App extends Component {
 			this.state.anglefromVertical !== newState.anglefromVertical ||
 			this.state.speed !== newState.speed ||
 			this.state.percenttime !== newState.percenttime ||
-			this.state.accel_earth !== newState.accel_earth ||
-			
-			(this.state.canvasStarData !== newState.canvasStarData &&
-			this.state.showStarForm === newState.showStarForm)
-
+			this.state.accel_earth !== newState.accel_earth
 			) //&&
 			//this.state.displayArticle===newState.displayArticle
 		)
@@ -343,143 +339,39 @@ class App extends Component {
 	}
 	
 	
-   //onChange={(e) => this.setState({starSpeed: e.target.value, })}
-   //onChange={(e) => this.updateStarSpeed(e.target.value) }
-	updateStarSpeed(value)	//called by dropdown form. "Show stars at: 5%"
-	{	this.setState({ starSpeed: value });	
-		this.receiveStarCenter(this.state.canvasStarData, value);
+	// Called by the "Show stars at:" dropdown
+	updateStarSpeed(value) {
+		this.setState({ starSpeed: value });
 	}
 
-	//callback function from CanvasSpace.js
-	//This is where App.js receives the coordinates for the stars' center of rotation
-	//And then starts / adjusts the star animation
-	receiveStarCenter(childData, starSpeed)
-	{
-		if(typeof starSpeed==='undefined') {starSpeed=this.state.starSpeed; }
-		
-		//need this for if it's called by adjusting the star speed dropdown menu
-		//instead of the canvas
-		this.setState({canvasStarData:childData,})
-		var starsobj = document.getElementById("stars");
-		var frozenstars = document.getElementById("frozenstars");
-				
-		//get top-left coordinate of canvas
-		var canvascoords = document.getElementById("spaceGround").getBoundingClientRect();
-		
-		//center of rotation based on pixels from the top-left of screen
-		var page_x = childData.centerX + canvascoords.x
-		var page_y = childData.centerY + canvascoords.y
-				
-		if(starsobj != null) {
+	// Callback from CanvasSpace — receives center of rotation and period
+	receiveStarCenter(childData) {
+		const canvascoords = document.getElementById("spaceGround").getBoundingClientRect();
+		const page_x = childData.centerX + canvascoords.x;
+		const page_y = childData.centerY + canvascoords.y;
 
-			//calculate distance from rotation center to bottom-right of screen
-			//to give enough room for the stars to rotate without going off the page
-			var diagonal = Math.sqrt( Math.pow(window.innerHeight-page_y, 2) + Math.pow(window.innerWidth-page_x,2) )
-			
-			//distance from rotation center to bottom-left of screen
-			var diagonal2 = Math.sqrt( Math.pow(window.innerHeight-page_y, 2) + Math.pow(0-page_x,2) )
-			
-			//distance from rotation center to top-right of screen
-			var diagonal3 = Math.sqrt( Math.pow(page_y, 2) + Math.pow(window.innerWidth-page_x, 2))
-			
-			//and the top-left doesn't ever matter here.
-			
-			if(diagonal2>diagonal) {diagonal=diagonal2} //pick whichever is greater
-			if(diagonal3>diagonal) {diagonal=diagonal3}
-				
-			//sets the stars size dynamically (below) up to 8 times the screen size.
-			//(divides by 2, because you only need half of it to be > than diagonal)
-			if(window.innerWidth*12/2 > diagonal && window.innerHeight*12/2 > diagonal)
-			{
-				//the exact size the stars need to be to cover the screen while spinning.
-				//(don't waste resources in spinning something bigger than necessary)
-				starsobj.style.width=(diagonal*2).toString() + "px"
-				starsobj.style.height=(diagonal*2).toString() + "px"
-				
-				this.setState( {showStarForm: true,} );
+		// Largest distance from rotation center to any screen corner
+		const diagonal = Math.max(
+			Math.sqrt(Math.pow(window.innerHeight - page_y, 2) + Math.pow(window.innerWidth  - page_x, 2)),
+			Math.sqrt(Math.pow(window.innerHeight - page_y, 2) + Math.pow(page_x, 2)),
+			Math.sqrt(Math.pow(page_y, 2)                      + Math.pow(window.innerWidth  - page_x, 2))
+		);
 
-				//change css of stars object to center it at center of rotation
-						//canvas is 1000% of screen size, so 500% is centered.
-				var leftval = page_x - starsobj.offsetWidth/2
-				var topval = page_y - starsobj.offsetHeight/2
-				starsobj.style.left = leftval.toString() + "px"
-				starsobj.style.top  = topval.toString() + "px"
-				
-				var duration = childData.duration / ((this.state.percenttime/100)*(starSpeed/100));
-				
-				if (duration < 0 || isNaN(duration)) {duration="auto"}
-				
-				
-				starsanimation = starsobj.animate({
-					  transform: ['rotate(0)', 'rotate(-360deg)']}, 
-				{
-					duration: duration,
-					iterations: Infinity
-				});
-			}
-			else //if the station is huge, just move the stars horizontally
-			{	
-				//moves at a random angle depending on the prior transformation.
-				//starsobj.style.animation = "move-stars-back 50s linear infinite";
+		// If the rotation circle would be implausibly large, scroll instead of rotate
+		const largeStation = !(window.innerWidth * 6 > diagonal && window.innerHeight * 6 > diagonal);
 
-				//Aligning the stars object to exactly the size of the picture
-				//makes the animation (below) perfectly smooth with no jumps.
-				//This sets the picture to the minimum size to cover the entire screen
-				//(don't waste resources sliding something that's not visible)
-				
-				var slidestarsleft = 1280;  //pixel witdth of the star image
-					//identifies where to start the image before sliding it to the
-					//edge of the screen.
-
-				var slidestarswidth = 1280+window.innerWidth;
-				
-				
-				starsobj.style.width=slidestarswidth.toString() + "px"
-				starsobj.style.height=1*window.innerHeight.toString() + "px"
-				starsobj.style.left=-slidestarsleft.toString() + "px"
-				starsobj.style.top=(0).toString() + "px"
-												
-				//This animation is good because it resets the rotation
-				//and flows horizontally to the right the way I want it to.
-				starsanimation = starsobj.animate({ 
-				transform: ['translateX(0)', 'translateX(1280px)']}, 
-				{
-					duration: 10000, //50000,
-					iterations: Infinity
-				});
-				
-				this.setState( {showStarForm: false,} );
-			}
-		}
-		else //if I can't reach the stars object on the canvas
-		{
-			if(starsanimation!=null) {starsanimation.pause(); starsanimation=null;}
-		}
-		
-		if(frozenstars!=null)
-		{
-			//this.setState( {showStarForm: true,} );
-
-			frozenstars.style.width=(2*window.innerWidth).toString() + "px"
-			frozenstars.style.height=(2*window.innerHeight).toString() + "px"
-			
-			frozenstars.style.left = (-window.innerWidth/2).toString() + "px"
-			frozenstars.style.top  = (-window.innerHeight/2).toString() + "px"
-			
-		}
+		this.setState({
+			starCenterX:      page_x,
+			starCenterY:      page_y,
+			starDuration:     childData.duration,
+			starLargeStation: largeStation,
+			showStarForm:     !largeStation,
+		});
 	}
 
-	//freeze button, freeze or unfreeze
-	freeze()
-	{
-		if (this.state.frozen===false) { //e.g. before it switches to true
-			if(starsanimation != null) { 
-				starsanimation.pause(); 
-				starsanimation=null;
-			}
-		}
-		
-		this.setState( {frozen: !this.state.frozen} )  
+	// Freeze / unfreeze — StarCanvas observes the frozen prop directly
+	freeze() {
+		this.setState({ frozen: !this.state.frozen });
 	}
 	
 	//switch between metric and imperial units
@@ -651,8 +543,8 @@ class App extends Component {
 			maxheight: answers.maxheight,
 			//x_f : answers.x_f,
 			//y_f : answers.y_f,
-			time: answers.time < 0 ? 0 : answers.time,
-			slope: answers.slope,
+			time: (!isFinite(answers.time) || answers.time < 0) ? 0 : answers.time,
+			slope: isFinite(answers.slope) ? answers.slope : 0,
 			total_difference: answers.total_difference,
 			//directionleft: answers.directionleft,
 						//starting speed of coin with standing speed incorporated
@@ -791,10 +683,6 @@ class App extends Component {
 	var showStarForm="starForm";
 	if(!this.state.showStarForm) { showStarForm="hide"; }
 	
-	//canvas is frozen, then stars are frozen
-	var frozenstars
-	if(this.state.frozen) { frozenstars = "frozenstars"; }
-	else { frozenstars = "stars";}
 	
 	
 	//this part preps the text to display "difference" on the main screen
@@ -871,9 +759,15 @@ class App extends Component {
 return (
 
 <div id="App">
-	<div id="starsparent">
-		<div id={frozenstars}></div>
-	</div>
+	<StarCanvas
+		centerX={this.state.starCenterX}
+		centerY={this.state.starCenterY}
+		duration={this.state.starDuration}
+		starSpeed={this.state.starSpeed}
+		percenttime={this.state.percenttime}
+		frozen={this.state.frozen}
+		largeStation={this.state.starLargeStation}
+	/>
 
 	{leftMenu}
 
