@@ -132,11 +132,11 @@ export function processQueryVariables()
 		{ angle=defaults.anglefromVertical }
 	else { queryflag=true; }
 
-	//start with right menu open
-	var rightMenu = getQueryVariable("statsMenu");
-	if(rightMenu==="true" || rightMenu==="statsMenu")
-		{ rightMenu=true; }
-	else { rightMenu=false; }
+	//start with stats panel open
+	var statsOpen = getQueryVariable("statsMenu");
+	if(statsOpen==="true" || statsOpen==="statsMenu")
+		{ statsOpen=true; }
+	else { statsOpen=false; }
 
 	//start with left menu open
 	var leftMenu = getQueryVariable("inputMenu");
@@ -176,9 +176,9 @@ export function processQueryVariables()
 			//thus I'm not doing the queryflag here
 
 	//if a query has been used, don't display the popup message.
-	if(	queryflag || 
+	if(	queryflag ||
 		getQueryVariable("noPopUp")==="noPopUp" ||
-		leftMenu || rightMenu	) 
+		leftMenu || statsOpen	)
 			{displayPopUp=false;}
 
 	if(window.innerWidth > 750){ leftMenu=true;}
@@ -196,7 +196,7 @@ export function processQueryVariables()
 		
 		defaults: defaults,
 		leftMenu: leftMenu,
-		rightMenu: rightMenu,
+		statsOpen: statsOpen,
 		frozen: frozen,
 		queryflag:queryflag,
 		PopUpOpen: displayPopUp,

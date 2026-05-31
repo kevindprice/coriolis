@@ -13,4 +13,7 @@ export default defineConfig({
       loader: { '.js': 'jsx' },
     },
   },
+  server: {
+    host: true,   // bind to 0.0.0.0 so other devices on the LAN can connect
+  },
 })

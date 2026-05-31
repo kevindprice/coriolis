@@ -152,7 +152,7 @@ class App extends Component {
 			sampleNum: 0,
 			
 			menuLeftOpen: queryValues.leftMenu,
-			menuRightOpen: queryValues.rightMenu,
+			statsOpen: queryValues.statsOpen,
 			frozen:queryValues.frozen,
 			queryflag:queryValues.queryflag,	//used to lock the defaults if a query is used
 			PopUpOpen: queryValues.PopUpOpen,
@@ -211,7 +211,7 @@ class App extends Component {
 		this.updateDiameter = this.updateDiameter.bind(this);
 		this.updateOtherVars = this.updateOtherVars.bind(this);
 		this.toggleLeftMenu = this.toggleLeftMenu.bind(this);
-		this.toggleRightMenu = this.toggleRightMenu.bind(this);
+		this.toggleStats = this.toggleStats.bind(this);
 		this.closeMenus = this.closeMenus.bind(this);
 		this.togglePopUp = this.togglePopUp.bind(this);
 		this.leftArrow = this.leftArrow.bind(this);
@@ -560,24 +560,19 @@ class App extends Component {
 	}
 	
 	toggleLeftMenu() {
-		this.setState( {
-			//menuLeftOpen: state.isOpen, frozen: state.isOpen,
+		this.setState({
 			menuLeftOpen: !this.state.menuLeftOpen,
 			frozen: !this.state.menuLeftOpen,
-		} )
+		})
 	}
-	
-	toggleRightMenu() {
-		this.setState( {
-			//menuRightOpen: state.isOpen, frozen: state.isOpen,
-			menuRightOpen: !this.state.menuRightOpen,
-			frozen: !this.state.menuRightOpen,
-		} )
+
+	toggleStats() {
+		this.setState({ statsOpen: !this.state.statsOpen });
 	}
-	
+
 	//the apply button in the left menu
 	closeMenus() {
-		this.setState({ menuLeftOpen: false, menuRightOpen:false, frozen: false});
+		this.setState({ menuLeftOpen: false, frozen: false });
 	}
 	
 	togglePopUp() {
@@ -621,7 +616,7 @@ class App extends Component {
 			start_v_y: start_v_y,
 			units: this.state.units,
 			menuLeftOpen: this.state.menuLeftOpen,
-			menuRightOpen: this.state.menuRightOpen,
+			menuRightOpen: false,
 			percenttime: this.state.percenttime,
 			frozen: this.state.frozen,
 			expectedtime: this.state.expectedtime,
@@ -699,7 +694,7 @@ class App extends Component {
 		var show_diff_from_expected2="hide"
 		var diff_from_expected2
 		//var diff_from_expected3
-		if(difference < 1)
+		if(difference < 1) //if the units are too large, seek smaller units like cm and inches.
 		{
 			show_diff_from_expected2 = ""
 			//show_diff_from_expected1 = "hide"
@@ -708,7 +703,7 @@ class App extends Component {
 			else
 			{  diff_from_expected2 = difference * 100; secondaryunits="cm"; } //cm
 		}
-		else if(difference>5280 && this.state.units==="ft") {
+		else if(difference>5280 && this.state.units==="ft") { //if the units are too small, seek larger units like miles.
 			show_diff_from_expected2 = ""
 			//show_diff_from_expected1 = "hide"
 			diff_from_expected2 = difference / 5280;
@@ -716,7 +711,7 @@ class App extends Component {
 			showDifference="diffnoticesmall"
 
 		}
-		else if(difference>1000 && this.state.units==="m") {
+		else if(difference>1000 && this.state.units==="m") { //if the units are too small, seek larger units like km.
 			show_diff_from_expected2 = ""
 			//show_diff_from_expected1 = "hide"
 			diff_from_expected2 = difference / 1000;
@@ -753,12 +748,14 @@ class App extends Component {
 		<SideDrawer isOpen={ this.state.menuLeftOpen } menuClassName="bm-menu-left" onClose={ this.closeMenus }>
 			{innerMenu}
 		</SideDrawer>);
-
-
+	
+	//if the stats menu is open, allow the user to scroll down.
+	var noscroll="noscroll"
+	if(this.state.statsOpen){ noscroll="" }
 
 return (
 
-<div id="App">
+<div id="App" className={noscroll}>
 	<StarCanvas
 		centerX={this.state.starCenterX}
 		centerY={this.state.starCenterY}
@@ -771,14 +768,7 @@ return (
 
 	{leftMenu}
 
-	<SideDrawer right isOpen={ this.state.menuRightOpen } menuClassName="bm-menu-right" onClose={ this.closeMenus }>
-		<OutputMenu
-			menuOpen={this.state.menuRightOpen}
-			closeMenus={this.closeMenus}
-			vars={EncapsulatedOutput}
-		/>
-	</SideDrawer>
-	
+
 
 <div id="bm-page-wrap" className={burgerPageClass} ref={this.burgerPageRef}>
 
@@ -816,21 +806,26 @@ return (
 				  
 	<div>
 		<button className="button" id={"leftMenuButton"} onClick={this.toggleLeftMenu}>Edit the Throw</button>
-		
-		<div className="centered">
-			<button className="button" id="FreezeButton" onClick={ this.freeze }>{this.state.frozen ? "Unfreeze" : "Freeze"}</button>
-			<button id="referenceLink" className="button" onClick={this.togglePopUp}>About This Page</button>
-		</div>
-		<button className="button" id="rightMenuButton" onClick={this.toggleRightMenu}>&ensp;Stats&ensp;</button>
+		<button id="referenceLink" className="button floatright" onClick={this.togglePopUp}>About This Page</button>
+		<button className="button" id="FreezeButton" onClick={ this.freeze }>{this.state.frozen ? "Unfreeze" : "Freeze"}</button>
 	</div>
 	
-	<div className={ showDifference }>
-		<span style={{color:'#adbdff'}}>Difference from throw on Earth:</span>
-		<span className={show_diff_from_expected1}>&nbsp;{format(difference)}</span>
-		<span className={show_diff_from_expected1}>&nbsp;{this.state.units}</span>
-		<span className={show_diff_from_expected2}>&nbsp;({format(diff_from_expected2)}</span>
-		<span className={show_diff_from_expected2}>&nbsp;{secondaryunits})</span>
-	</div>
+
+	<OutputMenu
+		statsOpen={this.state.statsOpen}
+		shiftforBurger={this.state.shouldShiftForBurger}
+		toggleStats={this.toggleStats}
+		vars={EncapsulatedOutput}
+	>
+		<div className={ showDifference }>
+			<span style={{color:'#adbdff'}}>Difference from throw on Earth:</span>
+			<span className={show_diff_from_expected1}>&nbsp;{format(difference)}</span>
+			<span className={show_diff_from_expected1}>&nbsp;{this.state.units}</span>
+			<span className={show_diff_from_expected2}>&nbsp;({format(diff_from_expected2)}</span>
+			<span className={show_diff_from_expected2}>&nbsp;{secondaryunits})</span>
+		</div>
+	</OutputMenu>
+
 </div>
 
   <PopUp display={this.state.PopUpOpen} toggle={this.togglePopUp}/>
