@@ -719,14 +719,8 @@ class App extends Component {
 			showDifference="diffnoticesmall"
 		}
 
-	//reshape page if left menu opens
-	//react-burger-menu has an option to push, but that pushes off the page
-	//it also has an option to scale, but that doesn't work, 
-			//and I don't want to 'scale' everything, just reshape it.
-	var burgerPageClass = ""
-	var leftMenu  
-	
-	var innerMenu = (<LeftMenu 
+	let burgerPageClass = "";
+	let innerMenu = (<LeftMenu
 					convertunits = {this.convertunits}
 					updateState = {this.updateState}
 					updateDiameter = {this.updateDiameter}
@@ -744,7 +738,7 @@ class App extends Component {
 	if(this.state.menuLeftOpen && this.state.shouldShiftForBurger) {
 		burgerPageClass="pageShrunkForBurger";
 	}
-	var leftMenu = (
+	const leftMenu = (
 		<SideDrawer isOpen={ this.state.menuLeftOpen } menuClassName="bm-menu-left" onClose={ this.closeMenus }>
 			{innerMenu}
 		</SideDrawer>);
