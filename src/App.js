@@ -5,6 +5,7 @@ import './App.css';
 
 import CanvasEarth from './CanvasEarth'
 import CanvasSpace from './CanvasSpace'
+import CanvasInertial from './CanvasInertial'
 import PlayBack from './PlayBack'
 import { crunchnumbers } from './crunchnumbers.js'
 import { processQueryVariables } from './processQueries.js'
@@ -195,7 +196,8 @@ class App extends Component {
 			//actually I only need to  know if it needs to be tall or wide.
 			//Prevent unnecessary re-renders by not updating state on every resize.
 			pageShape: pageShape,
-			shouldShiftForBurger: (window.innerWidth > 600), 
+			shouldShiftForBurger: (window.innerWidth > 600),
+			viewPair: 'earth-station',   // which two panels to show
 				//if the page is too skinny, like on mobile, then shrinking just looks ugly.
 			
 			//now calculated in the number crunching
@@ -365,26 +367,16 @@ class App extends Component {
 
 	// Callback from CanvasSpace — receives center of rotation and period
 	receiveStarCenter(childData) {
-		const canvascoords = document.getElementById("spaceGround").getBoundingClientRect();
+		const el = document.getElementById("spaceGround");
+		if (!el) return;
+		const canvascoords = el.getBoundingClientRect();
 		const page_x = childData.centerX + canvascoords.x;
 		const page_y = childData.centerY + canvascoords.y;
 
-		// Largest distance from rotation center to any screen corner
-		const diagonal = Math.max(
-			Math.sqrt(Math.pow(window.innerHeight - page_y, 2) + Math.pow(window.innerWidth  - page_x, 2)),
-			Math.sqrt(Math.pow(window.innerHeight - page_y, 2) + Math.pow(page_x, 2)),
-			Math.sqrt(Math.pow(page_y, 2)                      + Math.pow(window.innerWidth  - page_x, 2))
-		);
-
-		// If the rotation circle would be implausibly large, scroll instead of rotate
-		const largeStation = !(window.innerWidth * 6 > diagonal && window.innerHeight * 6 > diagonal);
-
 		this.setState({
-			starCenterX:      page_x,
-			starCenterY:      page_y,
-			starDuration:     childData.duration,
-			starLargeStation: largeStation,
-			showStarForm:     !largeStation,
+			starCenterX:  page_x,
+			starCenterY:  page_y,
+			starDuration: childData.duration,
 		});
 	}
 
@@ -551,9 +543,14 @@ class App extends Component {
 
 		var answers = crunchnumbers(encapsulatedCrunch)
 
-		//console.log(answers.expectedtime)
-		
+		const diameter_m = this.state.units === 'ft'
+			? this.state.diameter * 0.3048
+			: this.state.diameter;
+		const largeStation = diameter_m > 5000;
+
 		this.setState({
+			starLargeStation: largeStation,
+			showStarForm: !largeStation,
 			expectedtime : answers.expectedtime,
 			expectedheight: answers.expectedheight,
 			standingvelocity: answers.standingvelocity,
@@ -676,14 +673,24 @@ class App extends Component {
 		}
 
 
-	//show if the stars are not in realtime
-	var showStarLabel="hide"	/* eslint-disable */
-	if(!this.state.showStarForm || this.state.starSpeed != 100 || this.state.frozen)
-	{ showStarLabel="starLabel" }
+	// Compute largeStation directly from diameter every render — never stale.
+	const diameter_m_render = this.state.units === 'ft'
+		? this.state.diameter * 0.3048
+		: this.state.diameter;
+	const isLargeStation = diameter_m_render > 5000;
 
-	 //don't display the star speed option if it's just going horizontally/not synced
-	var showStarForm="starForm";
-	if(!this.state.showStarForm) { showStarForm="hide"; }
+	// Hide the speed dropdown for large stations (scroll mode).
+	var showStarForm = isLargeStation ? "hide" : "starForm";
+
+	// Show the "*Star motion not realtime" label when stars aren't at true speed.
+	var showStarLabel = "hide"; /* eslint-disable-line */
+	if (isLargeStation || this.state.starSpeed != 100 || this.state.frozen) /* eslint-disable-line */
+	{ showStarLabel = "starLabel"; }
+
+	const viewPair    = this.state.viewPair;
+	const showEarth    = viewPair === 'earth-station'    || viewPair === 'earth-inertial';
+	const showStation  = viewPair === 'earth-station'    || viewPair === 'station-inertial';
+	const showInertial = viewPair === 'earth-inertial'   || viewPair === 'station-inertial';
 	
 	
 	
@@ -745,9 +752,14 @@ class App extends Component {
 	if(this.state.menuLeftOpen && this.state.shouldShiftForBurger) {
 		burgerPageClass="pageShrunkForBurger";
 	}
+	
 	if(this.state.pageShape === 'tall') {
 		burgerPageClass += " layout-tall";
 	}
+	else {
+		burgerPageClass += " layout-wide";
+	}
+	
 	const leftMenu = (
 		<SideDrawer isOpen={ this.state.menuLeftOpen } menuClassName="bm-menu-left" onClose={ this.closeMenus }>
 			{innerMenu}
@@ -769,7 +781,7 @@ return (
 		starSpeed={this.state.starSpeed}
 		percenttime={this.state.percenttime}
 		frozen={this.state.frozen}
-		largeStation={this.state.starLargeStation}
+		largeStation={isLargeStation}
 	/>
 
 	{leftMenu}
@@ -780,34 +792,75 @@ return (
 
 	<div className="navbar">A Toss on a Spinning Space Station</div>
 
+	<div id="view-selector">
+		<span className="view-selector-label">View: </span>
+		<button
+			className={"view-btn" + (viewPair === 'earth-station'    ? ' view-btn-active' : '')}
+			onClick={() => this.setState({viewPair: 'earth-station'})}>
+			Earth + Station
+		</button>
+		<button
+			className={"view-btn" + (viewPair === 'earth-inertial'   ? ' view-btn-active' : '')}
+			onClick={() => this.setState({viewPair: 'earth-inertial'})}>
+			Earth + Inertial
+		</button>
+		<button
+			className={"view-btn" + (viewPair === 'station-inertial' ? ' view-btn-active' : '')}
+			onClick={() => this.setState({viewPair: 'station-inertial'})}>
+			Station + Inertial
+		</button>
+	</div>
+
+	{showEarth && (
 	<div className={this.state.pageShape + "Canvas"} >
 		<div className="overlaytext">On Earth</div>
-		
+
 		<PlayBack min={0} max={Math.ceil(this.state.time)*100} updateState={this.updateState} default={this.state.defaults["percenttime"]}  variable="percenttime" value={this.state.percenttime} units="%"/>
-		
+
 		<CanvasEarth vars={EncapsulatedVariables} defaults={this.state.defaults} />
-		
+
 		<div className="scale"><i>Scale in {fullunits}</i></div>
 	</div>
+	)}
 
 	<div id={this.state.pageShape + "Buffer"}></div>
 
+	{showStation && (
 	<div className={this.state.pageShape + "Canvas"} id="spaceGround" >
 		<div className="overlaytext">On a {this.state.diameter} {this.state.units} station</div>
 
-		<div className={showStarForm}>Show stars at:&nbsp;
+		{!showEarth && (
+			<PlayBack min={0} max={Math.ceil(this.state.time)*100} updateState={this.updateState} default={this.state.defaults["percenttime"]} variable="percenttime" value={this.state.percenttime} units="%"/>
+		)}
+
+		<div className={showStarForm + (!showEarth ? ' starFormBelow' : '')}>Show stars at:&nbsp;
 			<select id="starDropdown" value={this.state.starSpeed} onChange={(e) => this.updateStarSpeed(e.target.value) }>
 				<option value={10}>Slow speed (10%)</option>
 				<option value={100}>True speed (100%)</option>
 			</select>
 		</div>
-		
+
 		<CanvasSpace vars={EncapsulatedVariables} sendRotation={ this.receiveStarCenter } defaults={this.state.defaults} />
-		
+
 		<div className="scale"><i>Scale in {fullunits}</i></div>
 		<div className={showStarLabel}>*Star motion not realtime</div>
 
 	</div>
+	)}
+
+	{showInertial && (
+	<div className={this.state.pageShape + "Canvas"} >
+		<div className="overlaytext" style={{color:'#9dfcdb'}}>Inertial Frame</div>
+
+		{!showEarth && !showStation && (
+			<PlayBack min={0} max={Math.ceil(this.state.time)*100} updateState={this.updateState} default={this.state.defaults["percenttime"]} variable="percenttime" value={this.state.percenttime} units="%"/>
+		)}
+
+		<CanvasInertial vars={EncapsulatedVariables} defaults={this.state.defaults} />
+
+		<div className="scale" style={{color:'#9dfcdb'}}><i>Scale in {fullunits}</i></div>
+	</div>
+	)}
 	
 				  
 	<GalleryStrip

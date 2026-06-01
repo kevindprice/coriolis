@@ -110,9 +110,52 @@ body {
 	text-align: center;
 }
 
-/* Hide gallery strip when the layout is wide (React sets layout-tall on the wrapper
-   when the canvas is tall, so absence of that class means wide layout) */
+/* Hide gallery strip in wide/landscape layout (canvases are side-by-side) */
 #bm-page-wrap:not(.layout-tall) #main-gallery { display: none; }
+
+/* Hide gallery strip when the burger menu has shifted the page open */
+.pageShrunkForBurger #main-gallery { display: none; }
+
+
+/* ======= View Selector (Earth / Station / Inertial) ======== */
+
+#view-selector {
+	text-align: center;
+	padding: 5px 4px;
+	background-color: rgba(50, 52, 60, 0.92);
+	position: relative;
+	z-index: 1;
+}
+
+.view-selector-label {
+	color: #9dfcdb;
+	font-size: 0.9em;
+	margin-right: 4px;
+}
+
+.view-btn {
+	margin: 2px 4px;
+	padding: 4px 12px;
+	border-radius: 6px;
+	cursor: pointer;
+	background: #505359;
+	color: #9dfcdb;
+	border: 1px solid #9dfcdb;
+	font-size: 0.85em;
+}
+
+.view-btn:hover { background: #5e6470; }
+
+.view-btn-active {
+	background: #007acc;
+	border-color: #007acc;
+	color: white;
+}
+
+@media (max-width: 500px) {
+	.view-selector-label { display: none; }
+	.view-btn { padding: 3px 7px; font-size: 0.8em; }
+}
 
 
 /* ======= Bottom Buttons ======== */
@@ -551,20 +594,22 @@ input:invalid {  background-color: #ffdddd; }
 }
 	/*the popup bubble itself*/
 #popup {
-	width: 700px;
 	z-index:2000;
 	position:fixed;
-	top: 5vh;
-	width:400px;
-	
-	left:50%;
-	transform: translate(-50%, 0);
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: min(400px, 90vw);
+	max-height: 90vh;
+	max-height: 90dvh;
+	overflow-y: auto;
 	background-color:white;
 	border: 1px solid black;
 	border-radius:20px;
 	box-shadow:0 0 10px rgba(0,0,0,.8);
 	padding:20px;
 	text-align:left;
+	box-sizing: border-box;
 }
 
 /* Position and sizing of clickable cross button */
@@ -592,10 +637,13 @@ input:invalid {  background-color: #ffdddd; }
 	top:5px;
 	right:10px;
 	font-size:0.9em;
-	background-color:white;
+	background-color: rgba(255,255,255,0.6);
 	border-radius: 2px;
 	margin:2px;
 	padding-left:2px;
+	display:flex;
+	flex-direction:column;
+	align-items:flex-end;
 }
 
 #starDropdown {
@@ -681,6 +729,9 @@ input:invalid {  background-color: #ffdddd; }
 	width:160px;
 }
 
+/* starForm pushed below the PlayBack slider when both share the same panel */
+.starFormBelow { top: 65px; }
+
 .starLabel {
 	position:absolute;
 	bottom:5px;
@@ -709,23 +760,15 @@ input:invalid {  background-color: #ffdddd; }
 
 	.pageShrunkForBurger .navbar {
 		height:25px;
-		font-size:17px;
+		font-size:20px;
 		line-height:25px;
 	}
 }
 
-/*The width where the left menu overlays on top,
-as defined in App.js by this.state.shouldShiftForBurger*/
-@media screen and ( min-width:601px){
- #main-gallery {
-	display: none;
-}
-
-
 /* Tall layout: flex column so the two canvases fill all spare viewport height.
-   Triggered by React via .layout-tall whenever pageShape === 'tall' — this
-   correctly accounts for the burger menu shifting the canvas (315px subtracted)
-   so it fires in all tall cases, not just CSS portrait orientation. */
+   Applied at ALL widths so mobile phones also benefit — canvases shrink
+   automatically to accommodate the navbar, view-selector, buttons, etc.
+   Triggered by React via .layout-tall whenever pageShape === 'tall'. */
 
 #bm-page-wrap.layout-tall {
 	display: flex;
@@ -743,8 +786,33 @@ as defined in App.js by this.state.shouldShiftForBurger*/
 	min-height: 80px;
 }
 
-/* Don't let the small gap between canvases stretch */
-#bm-page-wrap.layout-tall #tallBuffer { flex-shrink: 0; }
+/*Landscape mode on phone */
+/*
+@media screen and ( max-height: 670px ){
+  #bm-page-wrap.layout-wide {
+	  display: flex;
+	  flex-wrap: wrap;
+	  flex-direction: column;
+	  height: 100vh;             
+	  height: 100dvh;            
+	  height: var(--app-height, 100dvh); 
+	  box-sizing: border-box;
+  }		
+	
+  #bm-page-wrap.layout-wide .wideCanvas {
+    flex: 1 1 60%;  
+    height: auto;
+	min-height: 140px;
+  }
+}
+*/
+
+/* Everything that is NOT a canvas must not steal canvas space */
+#bm-page-wrap.layout-tall .navbar          { flex-shrink: 0; }
+#bm-page-wrap.layout-tall #view-selector   { flex-shrink: 0; }
+#bm-page-wrap.layout-tall #tallBuffer      { flex-shrink: 0; }
+#bm-page-wrap.layout-tall #main-gallery    { flex-shrink: 0; }
+#bm-page-wrap.layout-tall #main-buttons    { flex-shrink: 0; }
 
 /* Pull the stats bar into the flex column so it sits at the bottom */
 #bm-page-wrap.layout-tall .floating-bottom {
@@ -753,6 +821,10 @@ as defined in App.js by this.state.shouldShiftForBurger*/
 	flex-shrink: 0;
 }
 
+/*The width where the left menu overlays on top,
+as defined in App.js by this.state.shouldShiftForBurger*/
+/* (min-width: 601px block intentionally removed — gallery visibility now
+   controlled by layout-tall and pageShrunkForBurger rules above) */
 
 
 /*Mobile screens tend to have things like
@@ -760,23 +832,12 @@ title bars, etc that shrink the size "seen."
 Shorten the menus to fit on mobile screens.*/
 @media screen and ( max-height: 670px ){
 	/*#popupcontent { height:420px; }*/
-	#popup h1 {		margin-block-start: 0em!important;
-					margin-block-end: 0em!important;	}
-
-	.diffnotice{ margin-top: 5px; }
 	
 	.swipearea { height:initial!important; }
 
 	.secondtable {padding-bottom:0px;}
-	.navbar {
-		height:25px;
-		font-size:17px;
-		line-height:25px;
-	}
 
 	#scaleunits { top:30px; left:10px;}
-	
-	
 	
 	#page-wrap { border:none; }
 
@@ -820,10 +881,9 @@ Shorten the menus to fit on mobile screens.*/
 /* Mobile phones in portrait mode */
 @media (max-width: 500px)
 {
-	#popup { width:85vw; top:2vh; }
-	
 	 /*good for portrait mode or docked window*/
 	.starForm {width: 135px; top:0px; right:0px; padding:0px;}
+	.starFormBelow { top: 65px; }
 	.diffnoticesmall { font-size: 0.8em;}
 	.button { padding:3.5px; font-weight:initial; font-size:.9em;}
 	#leftMenuButton { margin-left: 5px;}
@@ -832,7 +892,7 @@ Shorten the menus to fit on mobile screens.*/
 	
 	.navbar {
 		height:25px;
-		font-size:17px;
+		font-size: 20px;
 		line-height:25px;
 	}
 }
@@ -840,9 +900,7 @@ Shorten the menus to fit on mobile screens.*/
 /*On landscape media screens, allow the titlebar to scroll away 
  (unfortunately only works in Chrome mobile) */
 @media screen and ( max-height: 450px ){
-	#popup { width:90vw; top:1vh; height:70vh;}
 	.starForm {width: 105px!important; top:0px;} /*good for landscape mode*/
-	#popupcontent { height: 50vh; overflow:scroll; }
 	.wideCanvas { height: 65vh;}
 	.button { padding:5px; font-weight:initial; font-size:.95em;}
 
