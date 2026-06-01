@@ -183,10 +183,14 @@ class StarCanvas extends Component {
 	resizeCanvas() {
 		const canvas = this.canvasRef.current;
 		if (!canvas) return false;
-		// window.innerWidth/Height update when the mobile browser chrome
-		// slides in/out; vh units and clientHeight do not.
-		const w = window.innerWidth;
-		const h = window.innerHeight;
+		// visualViewport accounts for browser toolbars that overlay the viewport
+		// (e.g. Samsung Browser's bottom bar) which innerHeight misses.
+		const vv = window.visualViewport;
+		const w = vv ? vv.width  : window.innerWidth;
+		const h = vv ? vv.height : window.innerHeight;
+		// Keep --app-height in sync every frame so the CSS flex layout always fits
+		// within the true visible area, even if no resize event fired.
+		document.documentElement.style.setProperty('--app-height', h + 'px');
 		if (canvas.width === w && canvas.height === h) return false;
 		canvas.width  = w;
 		canvas.height = h;

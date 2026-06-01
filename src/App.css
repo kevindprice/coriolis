@@ -723,12 +723,39 @@ as defined in App.js by this.state.shouldShiftForBurger*/
 }
 
 
-/* Portrait screens: shorten tallCanvas to fit the gallery strip */
-@media screen and ( orientation: portrait ) and (max-height:775px) {
+/* Portrait: flex column so the two canvases fill all spare viewport height */
+@media screen and ( orientation: portrait ) {
+
+	#bm-page-wrap {
+		display: flex;
+		flex-direction: column;
+		height: 100vh;              /* last-resort fallback */
+		height: 100dvh;             /* modern browsers */
+		height: var(--app-height, 100dvh); /* JS-set: always matches true visible height */
+		/* Small bottom padding gives the Samsung Browser toolbar clearance.
+		   The flex canvases absorb it automatically via flex: 1. */
+		padding-bottom: 0;
+		box-sizing: border-box;
+	}
+
+	/* Canvases grow/shrink to share remaining space equally */
 	.tallCanvas {
-		height:30.5vh;
+		flex: 1;
+		height: auto;
+		min-height: 80px;
+	}
+
+	/* Don't let the small gap between canvases stretch */
+	#tallBuffer { flex-shrink: 0; }
+
+	/* Pull the stats bar into the flex column so it sits at the bottom */
+	#bm-page-wrap .floating-bottom {
+		position: static !important;
+		bottom: auto !important;
+		flex-shrink: 0;
 	}
 }
+
 
 
 /*Mobile screens tend to have things like

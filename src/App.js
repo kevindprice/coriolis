@@ -251,6 +251,10 @@ class App extends Component {
 		if(this.resizeObserver){
 			this.resizeObserver.disconnect();
 		}
+		window.removeEventListener('resize', this._updateAppHeight);
+		if (window.visualViewport) {
+			window.visualViewport.removeEventListener('resize', this._updateAppHeight);
+		}
 	}
 	
 
@@ -282,8 +286,22 @@ class App extends Component {
 			{ this.setState({shouldShiftForBurger:false}) }
 			if(!this.state.shouldShiftForBurger && window.innerWidth > 600 && "ResizeObserver" in window)
 			{ this.setState({shouldShiftForBurger:true}) }
-		});		
-		
+		});
+
+		// Keep --app-height in sync with the true visible viewport height.
+		// Uses visualViewport so Samsung Browser's overlay toolbar is accounted for.
+		this._updateAppHeight = () => {
+			const height = window.visualViewport
+				? window.visualViewport.height
+				: window.innerHeight;
+			document.documentElement.style.setProperty('--app-height', height + 'px');
+		};
+		this._updateAppHeight();
+		window.addEventListener('resize', this._updateAppHeight);
+		if (window.visualViewport) {
+			window.visualViewport.addEventListener('resize', this._updateAppHeight);
+		}
+
 	}
 
 	
@@ -583,21 +601,9 @@ class App extends Component {
 
 	
   render() {
-	//var shape	//is the window tall or wide? (based on event listener to state)
-	//var bufferid	//if tall, add a little height break between canvases.
-	
-	/*if(this.state.width > this.state.height)// * 1.25)
-	{
-		shape="wideCanvas";		//add a width break between canvases.
-		bufferid="widthBuffer";
-	}
-	else
-	{  				
-		shape="tallCanvas";
-		bufferid="heightBuffer" //add a little height break between canvases.
-	}*/
-	
-	
+	//pageShape is defined above in the constructor, 
+	//then monitored in the resizeObserver
+
 	var fullunits
 	if(this.state.units==="ft")
 	{ fullunits = "feet" }	else { fullunits = "meters" }  //"Scale in meters"
@@ -809,7 +815,7 @@ return (
 		text={Gallery.samples[this.state.sampleNum].text}
 	/>
 
-	<div>
+	<div id="main-buttons">
 		<button className="button" id={"leftMenuButton"} onClick={this.toggleLeftMenu}>Edit the Throw</button>
 		<button id="referenceLink" className="button floatright" onClick={this.togglePopUp}>About This Page</button>
 		<button className="button" id="FreezeButton" onClick={ this.freeze }>{this.state.frozen ? "Unfreeze" : "Freeze"}</button>
@@ -830,6 +836,8 @@ return (
 			<span className={show_diff_from_expected2}>&nbsp;{secondaryunits})</span>
 		</div>
 	</OutputMenu>
+
+
 </div>
 
   <PopUp display={this.state.PopUpOpen} toggle={this.togglePopUp}/>
