@@ -191,9 +191,14 @@ class StarCanvas extends Component {
 		// Keep --app-height in sync every frame so the CSS flex layout always fits
 		// within the true visible area, even if no resize event fired.
 		document.documentElement.style.setProperty('--app-height', h + 'px');
-		if (canvas.width === w && canvas.height === h) return false;
-		canvas.width  = w;
-		canvas.height = h;
+		//console.log(Math.floor(w), canvas.width);
+		
+		if (canvas.width === Math.floor(w) && canvas.height === Math.floor(h)) return false;
+		canvas.width  = Math.floor(w); //floor because it's not quite to the pixel, 
+		canvas.height = Math.floor(h); //and the canvas takes it to the pixel.
+							//Replacing the imprecise number was triggering a repeated 
+							//re-draw, making the stars fly by on large canvases
+							// in draw() --> initStars()
 		return true;
 	}
 
