@@ -110,11 +110,9 @@ body {
 	text-align: center;
 }
 
-/* Hide on landscape/wide screens — left menu is readily accessible there */
-/* @media (orientation: landscape) { */
-@media screen and ( min-width: 601px ){
-	#main-gallery { display: none; }
-}
+/* Hide gallery strip when the layout is wide (React sets layout-tall on the wrapper
+   when the canvas is tall, so absence of that class means wide layout) */
+#bm-page-wrap:not(.layout-tall) #main-gallery { display: none; }
 
 
 /* ======= Bottom Buttons ======== */
@@ -718,49 +716,47 @@ input:invalid {  background-color: #ffdddd; }
 
 /*The width where the left menu overlays on top,
 as defined in App.js by this.state.shouldShiftForBurger*/
-@media screen and ( max-width:600px){
- 
+@media screen and ( min-width:601px){
+ #main-gallery {
+	display: none;
 }
 
 
-/* Portrait: flex column so the two canvases fill all spare viewport height */
-@media screen and ( orientation: portrait ) {
+/* Tall layout: flex column so the two canvases fill all spare viewport height.
+   Triggered by React via .layout-tall whenever pageShape === 'tall' — this
+   correctly accounts for the burger menu shifting the canvas (315px subtracted)
+   so it fires in all tall cases, not just CSS portrait orientation. */
 
-	#bm-page-wrap {
-		display: flex;
-		flex-direction: column;
-		height: 100vh;              /* last-resort fallback */
-		height: 100dvh;             /* modern browsers */
-		height: var(--app-height, 100dvh); /* JS-set: always matches true visible height */
-		/* Small bottom padding gives the Samsung Browser toolbar clearance.
-		   The flex canvases absorb it automatically via flex: 1. */
-		padding-bottom: 0;
-		box-sizing: border-box;
-	}
+#bm-page-wrap.layout-tall {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;              /* last-resort fallback */
+	height: 100dvh;             /* modern browsers */
+	height: var(--app-height, 100dvh); /* JS-set: always matches true visible height */
+	box-sizing: border-box;
+}
 
-	/* Canvases grow/shrink to share remaining space equally */
-	.tallCanvas {
-		flex: 1;
-		height: auto;
-		min-height: 80px;
-	}
+/* Canvases grow/shrink to share remaining space equally */
+#bm-page-wrap.layout-tall .tallCanvas {
+	flex: 1;
+	height: auto;
+	min-height: 80px;
+}
 
-	/* Don't let the small gap between canvases stretch */
-	#tallBuffer { flex-shrink: 0; }
+/* Don't let the small gap between canvases stretch */
+#bm-page-wrap.layout-tall #tallBuffer { flex-shrink: 0; }
 
-	/* Pull the stats bar into the flex column so it sits at the bottom */
-	#bm-page-wrap .floating-bottom {
-		position: static !important;
-		bottom: auto !important;
-		flex-shrink: 0;
-	}
+/* Pull the stats bar into the flex column so it sits at the bottom */
+#bm-page-wrap.layout-tall .floating-bottom {
+	position: static !important;
+	bottom: auto !important;
+	flex-shrink: 0;
 }
 
 
 
 /*Mobile screens tend to have things like
 title bars, etc that shrink the size "seen."
-I do not want the titlebar to scroll, because it seems glitchy. 
 Shorten the menus to fit on mobile screens.*/
 @media screen and ( max-height: 670px ){
 	/*#popupcontent { height:420px; }*/

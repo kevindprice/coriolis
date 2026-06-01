@@ -745,6 +745,9 @@ class App extends Component {
 	if(this.state.menuLeftOpen && this.state.shouldShiftForBurger) {
 		burgerPageClass="pageShrunkForBurger";
 	}
+	if(this.state.pageShape === 'tall') {
+		burgerPageClass += " layout-tall";
+	}
 	const leftMenu = (
 		<SideDrawer isOpen={ this.state.menuLeftOpen } menuClassName="bm-menu-left" onClose={ this.closeMenus }>
 			{innerMenu}
