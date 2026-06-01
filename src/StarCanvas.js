@@ -141,6 +141,10 @@ class StarCanvas extends Component {
 		this.resizeCanvas();
 		this.initStars();
 		window.addEventListener('resize', this.handleResize);
+		// visualViewport fires when mobile browser chrome slides in/out
+		if (window.visualViewport) {
+			window.visualViewport.addEventListener('resize', this.handleResize);
+		}
 		this.animId = requestAnimationFrame(this.animate);
 	}
 
@@ -168,20 +172,30 @@ class StarCanvas extends Component {
 	componentWillUnmount() {
 		if (this.animId) cancelAnimationFrame(this.animId);
 		window.removeEventListener('resize', this.handleResize);
+		if (window.visualViewport) {
+			window.visualViewport.removeEventListener('resize', this.handleResize);
+		}
 	}
 
 	// ── Canvas / star setup ────────────────────────────────────────────────────
 
+	// Returns true if the pixel buffer was actually changed.
 	resizeCanvas() {
 		const canvas = this.canvasRef.current;
-		if (!canvas) return;
-		canvas.width  = window.innerWidth;
-		canvas.height = window.innerHeight;
+		if (!canvas) return false;
+		// window.innerWidth/Height update when the mobile browser chrome
+		// slides in/out; vh units and clientHeight do not.
+		const w = window.innerWidth;
+		const h = window.innerHeight;
+		if (canvas.width === w && canvas.height === h) return false;
+		canvas.width  = w;
+		canvas.height = h;
+		return true;
 	}
 
 	handleResize() {
-		this.resizeCanvas();
-		if (this.props.largeStation) this.initStars();
+		const resized = this.resizeCanvas();
+		if (resized && this.props.largeStation) this.initStars();
 	}
 
 	initStars() {
@@ -218,7 +232,12 @@ class StarCanvas extends Component {
 
 	draw() {
 		const canvas = this.canvasRef.current;
-		if (!canvas || this.stars.length === 0 || !this.glowSprites) return;
+		if (!canvas || !this.glowSprites) return;
+		// Self-correct every frame in case the viewport changed without an event
+		// (e.g. Samsung Browser chrome sliding in/out).
+		const resized = this.resizeCanvas();
+		if (resized && this.props.largeStation) this.initStars();
+		if (this.stars.length === 0) return;
 		const ctx = canvas.getContext('2d');
 		ctx.fillStyle = '#000';
 		ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -271,7 +290,7 @@ class StarCanvas extends Component {
 			<canvas
 				ref={this.canvasRef}
 				style={{
-					position: 'absolute',
+					position: 'fixed',
 					top: 0,
 					left: 0,
 					width: '100%',

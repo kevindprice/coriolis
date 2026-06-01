@@ -14,6 +14,7 @@ import LeftMenu from "./LeftMenu"
 import StarCanvas from "./StarCanvas"
 import PopUp from "./PopUp"
 import Gallery from "./gallery.json"
+import GalleryStrip from "./GalleryStrip"
 
 //If ResizeObserver isn't supported to my liking...
 //then there is react-resize-observer import which could do the same thing,
@@ -743,9 +744,11 @@ class App extends Component {
 			{innerMenu}
 		</SideDrawer>);
 	
+	//Nevermind, I decided not to use this
 	//if the stats menu is open, allow the user to scroll down.
-	var noscroll="noscroll"
-	if(this.state.statsOpen){ noscroll="" }
+	//var noscroll="noscroll";
+	//if(this.state.statsOpen){ noscroll="" }
+	var noscroll="";
 
 return (
 
@@ -798,6 +801,14 @@ return (
 	</div>
 	
 				  
+	<GalleryStrip
+		leftFunction={this.leftArrow}
+		rightFunction={this.rightArrow}
+		showLeft={this.state.sampleNum > 0}
+		showRight={this.state.sampleNum < Gallery.samples.length - 1}
+		text={Gallery.samples[this.state.sampleNum].text}
+	/>
+
 	<div>
 		<button className="button" id={"leftMenuButton"} onClick={this.toggleLeftMenu}>Edit the Throw</button>
 		<button id="referenceLink" className="button floatright" onClick={this.togglePopUp}>About This Page</button>
@@ -819,7 +830,6 @@ return (
 			<span className={show_diff_from_expected2}>&nbsp;{secondaryunits})</span>
 		</div>
 	</OutputMenu>
-
 </div>
 
   <PopUp display={this.state.PopUpOpen} toggle={this.togglePopUp}/>

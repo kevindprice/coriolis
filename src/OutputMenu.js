@@ -182,7 +182,7 @@ class OutputMenu extends Component {
 					<div id="stats-panel-footer">
 						<button
 							id="back-to-top"
-							onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+							onClick={() => { this.props.toggleStats(); }}>
 							↑ Back to model
 						</button>
 					</div>

@@ -3,9 +3,7 @@ import './App.css';
 
 import InputField from './InputField'
 import AngleInput from './AngleInput'
-
-import leftarrow from "./img/left-arrow.png"
-import rightarrow from "./img/right-arrow.png"
+import GalleryStrip from './GalleryStrip'
 
 /*
 props:
@@ -78,14 +76,6 @@ render() {
 	{
 		seconddiameter = round(this.props.vars.diameter/1000); seconddiameterunits=" km across";
 	}
-	
-	var cursorLeft = "pointer"
-	if(!this.props.showLeftCursor)
-	{cursorLeft = "initial"}
-
-	var cursorRight = "pointer"
-	if(!this.props.showRightCursor)
-	{cursorRight = "initial"}
 	
 
 	//The input fields that appear if the user selects their checkmark
@@ -218,11 +208,14 @@ render() {
 <br/>
 <br/>
 
-<div style={{border:"3px solid black", borderRadius:"5px", paddingTop:"5px", paddingBottom:"5px"}}>
-<img src={leftarrow} alt="Leftarrow" width="30" style={{verticalAlign:"middle",cursor:cursorLeft}}  onClick={ this.props.leftFunction }/>
-<div style={{verticalAlign:"middle", width:"200px", display:"inline-block"}}>{this.props.galleryText}</div>
-<img src={rightarrow} alt="Rightarrow" width="30" style={{verticalAlign:"middle",cursor:cursorRight}}  onClick={ this.props.rightFunction }/>
-</div>
+<GalleryStrip
+	menu={true}
+	leftFunction={this.props.leftFunction}
+	rightFunction={this.props.rightFunction}
+	showLeft={this.props.showLeftCursor}
+	showRight={this.props.showRightCursor}
+	text={this.props.galleryText}
+/>
 
 
 
