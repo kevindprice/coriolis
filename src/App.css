@@ -786,7 +786,14 @@ input:invalid {  background-color: #ffdddd; }
 	min-height: 80px;
 }
 
+
 /*Landscape mode on phone */
+@media screen and ( max-height: 450px ){
+  #bm-page-wrap.layout-wide .wideCanvas {
+	height: 55vh;
+  }
+}
+
 /*
 @media screen and ( max-height: 670px ){
   #bm-page-wrap.layout-wide {
