@@ -811,6 +811,8 @@ return (
 		</button>
 	</div>
 
+	<div id="canvas-row">
+
 	{showEarth && (
 	<div className={this.state.pageShape + "Canvas"} >
 		<div className="overlaytext">On Earth</div>
@@ -850,7 +852,7 @@ return (
 
 	{showInertial && (
 	<div className={this.state.pageShape + "Canvas"} >
-		<div className="overlaytext" style={{color:'#9dfcdb'}}>Inertial Frame</div>
+		<div className="overlaytext" style={{color:'#9dfcdb',backgroundColor:"unset"}}>Inertial Frame</div>
 
 		{!showEarth && !showStation && (
 			<PlayBack min={0} max={Math.ceil(this.state.time)*100} updateState={this.updateState} default={this.state.defaults["percenttime"]} variable="percenttime" value={this.state.percenttime} units="%"/>
@@ -861,6 +863,8 @@ return (
 		<div className="scale" style={{color:'#9dfcdb'}}><i>Scale in {fullunits}</i></div>
 	</div>
 	)}
+
+	</div>{/* end #canvas-row */}
 	
 				  
 	<GalleryStrip

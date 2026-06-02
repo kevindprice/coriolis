@@ -110,9 +110,6 @@ body {
 	text-align: center;
 }
 
-/* Hide gallery strip in wide/landscape layout (canvases are side-by-side) */
-#bm-page-wrap:not(.layout-tall) #main-gallery { display: none; }
-
 /* Hide gallery strip when the burger menu has shifted the page open */
 .pageShrunkForBurger #main-gallery { display: none; }
 
@@ -266,7 +263,9 @@ body {
 	position: fixed;
 	top: 0;
 	left: 0;
-	height: 100%;
+	height: 100vh;
+	height: 100dvh;
+	height: var(--app-height, 100dvh);
 	width: 315px !important;
 	z-index: 1500 !important;
 	transform: translateX(-100%);
@@ -289,7 +288,12 @@ body {
 	margin: 0 auto;
 }
 
-.bm-menu-left, .bm-menu-right { background: #505359; font-size: 1.05em; position: relative; }
+.bm-menu-left, .bm-menu-right { 
+	height:	98vh;
+	background: #505359; 
+	font-size: 1.05em; 
+	position: relative; 
+}
 
 .swipearea {
 	width:100%;
@@ -637,7 +641,7 @@ input:invalid {  background-color: #ffdddd; }
 	top:5px;
 	right:10px;
 	font-size:0.9em;
-	background-color: rgba(255,255,255,0.6);
+	background-color: rgba(255,255,255,0.65);
 	border-radius: 2px;
 	margin:2px;
 	padding-left:2px;
@@ -648,6 +652,7 @@ input:invalid {  background-color: #ffdddd; }
 
 #starDropdown {
 	cursor:pointer;
+	background-color: rgb(255,255,255,0.65);
 }				
 
 
@@ -693,18 +698,12 @@ input:invalid {  background-color: #ffdddd; }
 /* "Scale in feet" */
 .scale{
 	text-align:left;
-	/*position:relative;*/
 	position:absolute;
-	/*top:-23px;*/
 	bottom:3px;
 	left:12px;
 	z-index:2;
-	/*left:10px;*/
 	font-weight:bold;
-	/*color:#098f5f; dark green*/
 	color:#9dfcdb; /*bright/lime green*/
-	/*color:#adbdff; /*sky blue*/
-	/*color:#007acc; color of the floor*/
 }
 
 /*"On Earth" and "On a 50 ft station"*/
@@ -715,7 +714,7 @@ input:invalid {  background-color: #ffdddd; }
 	left:10px;
 	color:#098f5f;
 	font-weight:bold;
-	/*background-color:white;*/
+	background-color:rgb(255 255 255 / 65%); /*white semitransparent*/
 	border-radius:2px;
 	padding:2px;
 }
@@ -779,6 +778,14 @@ input:invalid {  background-color: #ffdddd; }
 	box-sizing: border-box;
 }
 
+/* canvas-row becomes the single growing flex item; inside it canvases stack */
+#bm-page-wrap.layout-tall #canvas-row {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	min-height: 0;
+}
+
 /* Canvases grow/shrink to share remaining space equally */
 #bm-page-wrap.layout-tall .tallCanvas {
 	flex: 1;
@@ -786,40 +793,13 @@ input:invalid {  background-color: #ffdddd; }
 	min-height: 80px;
 }
 
-
-/*Landscape mode on phone */
-@media screen and ( max-height: 450px ){
-  #bm-page-wrap.layout-wide .wideCanvas {
-	height: 55vh;
-  }
-}
-
-/*
-@media screen and ( max-height: 670px ){
-  #bm-page-wrap.layout-wide {
-	  display: flex;
-	  flex-wrap: wrap;
-	  flex-direction: column;
-	  height: 100vh;             
-	  height: 100dvh;            
-	  height: var(--app-height, 100dvh); 
-	  box-sizing: border-box;
-  }		
-	
-  #bm-page-wrap.layout-wide .wideCanvas {
-    flex: 1 1 60%;  
-    height: auto;
-	min-height: 140px;
-  }
-}
-*/
-
 /* Everything that is NOT a canvas must not steal canvas space */
 #bm-page-wrap.layout-tall .navbar          { flex-shrink: 0; }
 #bm-page-wrap.layout-tall #view-selector   { flex-shrink: 0; }
-#bm-page-wrap.layout-tall #tallBuffer      { flex-shrink: 0; }
 #bm-page-wrap.layout-tall #main-gallery    { flex-shrink: 0; }
 #bm-page-wrap.layout-tall #main-buttons    { flex-shrink: 0; }
+/* tallBuffer lives inside #canvas-row's flex column */
+#bm-page-wrap.layout-tall #tallBuffer      { flex-shrink: 0; }
 
 /* Pull the stats bar into the flex column so it sits at the bottom */
 #bm-page-wrap.layout-tall .floating-bottom {
@@ -827,6 +807,51 @@ input:invalid {  background-color: #ffdddd; }
 	bottom: auto !important;
 	flex-shrink: 0;
 }
+
+
+
+/* Landscape phone: flex column so canvases fill all spare viewport height,
+   mirroring the layout-tall approach but with canvases side-by-side in a row. */
+#bm-page-wrap.layout-wide {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+	height: 100dvh;
+	height: var(--app-height, 100dvh);
+	box-sizing: border-box;
+}
+
+#bm-page-wrap.layout-wide #canvas-row {
+	display: flex;
+	flex-direction: row;
+	flex: 1;
+	min-height: 0;
+	align-items: stretch;
+}
+
+#bm-page-wrap.layout-wide .wideCanvas {
+	flex: 1;
+	height: auto;
+	min-height: 60px;
+}
+
+#bm-page-wrap.layout-wide #wideBuffer {
+	flex-shrink: 0;
+	width: 2vw;
+	display: block;
+}
+
+#bm-page-wrap.layout-wide .navbar          { flex-shrink: 0; }
+#bm-page-wrap.layout-wide #view-selector   { flex-shrink: 0; }
+#bm-page-wrap.layout-wide #main-buttons    { flex-shrink: 0; }
+#bm-page-wrap.layout-wide .floating-bottom {
+	position: static !important;
+	bottom: auto !important;
+	flex-shrink: 0;
+}
+
+
+
 
 /*The width where the left menu overlays on top,
 as defined in App.js by this.state.shouldShiftForBurger*/
@@ -851,11 +876,6 @@ Shorten the menus to fit on mobile screens.*/
 	.bm-menu-left h3, .bm-menu-right h3 {
 		margin-top:7px;
 		margin-bottom:7px;
-	}
-
-	.bm-menu-left, .bm-menu-right {
-		padding-top: 0em !important;
-		padding-bottom: 0em !important;
 	}
 	
 	.InputBox { /*margin-top:13px; */
@@ -904,17 +924,16 @@ Shorten the menus to fit on mobile screens.*/
 	}
 }
 
-/*On landscape media screens, allow the titlebar to scroll away 
- (unfortunately only works in Chrome mobile) */
-@media screen and ( max-height: 450px ){
-	.starForm {width: 105px!important; top:0px;} /*good for landscape mode*/
-	.wideCanvas { height: 65vh;}
-	.button { padding:5px; font-weight:initial; font-size:.95em;}
+/*Fixes for landscape mode on media screens*/
+@media screen and ( max-height: 500px ){
+	.wideCanvas .starForm {width: 105px!important; top:12px;} /*star speed menu*/
+	.button { padding:5px; font-weight:initial; font-size:.8em;} /*buttons*/
+	.scale { font-size:0.85em; } /*Scale in feet (etc)*/
+	.starLabel { font-size:0.8em; } /*Star motion not realtime*/
+	.overlaytext { font-size:0.9em; } /*On Earth, On a 100ft Station*/
+	/* Hide gallery strip (there's just not enough room) */
+	#main-gallery { display: none; }
 
-	#outer-container { height:100vh; overflow:initial; }
-
-	.wideCanvas .diffnotice {font-size:0.8em;}
-	.diffnoticesmall { font-size: 0.7em;}
 }
 
 /*the buttons are too big. Fix them.*/
@@ -928,6 +947,9 @@ Shorten the menus to fit on mobile screens.*/
 }
 
   /*for laptops with a docked window showing a tall/skinny browser*/
-@media screen and (max-width:750px)
-{ .wideCanvas .diffnotice {font-size:0.8em;} }
+/*@media screen and (max-width:750px)
+{ .wideCanvas .diffnotice {font-size:0.8em;} } 
+
+This last css is doing nothing and I'm not bothered by it.
+I guess it could be smaller.*/
 

@@ -144,7 +144,20 @@ render() {
 
 	  <div id="CenteredLeftMenu">
 		
-		<h3>Edit the Throw</h3>
+		<h3 style={{color:"#B0B0B0"}}>Edit the Throw</h3>
+
+	<GalleryStrip
+		menu={true}
+		leftFunction={this.props.leftFunction}
+		rightFunction={this.props.rightFunction}
+		showLeft={this.props.showLeftCursor}
+		showRight={this.props.showRightCursor}
+		text={this.props.galleryText}
+	/>
+	<div style={{fontSize:"0.7em", color:'#9dfcdb'}}>* Click through the gallery to learn more!</div>
+	<br/>
+
+
 		
 		<form className="RadioBox">
 			<label className="unitselector">
@@ -205,20 +218,8 @@ render() {
 		
 		<button className="ResetButton" onClick={ this.props.setDefaultState }>Return to<br/> defaults</button>&emsp;
 		<button className="ResetButton" onClick={ this.props.closeMenus }>Apply and<br/>close menu</button>
+
 <br/>
-<br/>
-
-<GalleryStrip
-	menu={true}
-	leftFunction={this.props.leftFunction}
-	rightFunction={this.props.rightFunction}
-	showLeft={this.props.showLeftCursor}
-	showRight={this.props.showRightCursor}
-	text={this.props.galleryText}
-/>
-
-
-
 <br/>
   <div style={{lineHeight:'1.25em'}}>
 	Read <a href={window.articleUrl+'/intro'}>the associated article</a><br/>

@@ -14,7 +14,7 @@ function GalleryStrip({ leftFunction, rightFunction, showLeft, showRight, text, 
 				className={'gallery-arrow' + (showLeft ? '' : ' gallery-arrow-disabled')}
 				onClick={showLeft ? leftFunction : undefined}
 			/>
-			<div id={menu ? undefined : 'main-gallery-text'} className={menu ? 'menu-gallery-text' : ''}>{text}</div>
+			<div id={menu ? undefined : 'main-gallery-text'} style={{color:"white"}} className={menu ? 'menu-gallery-text' : ''}>{text}</div>
 			<img
 				src={rightarrow}
 				alt="Next example"
