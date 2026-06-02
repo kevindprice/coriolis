@@ -222,7 +222,7 @@ class StarCanvas extends Component {
 		if (this.lastTime !== null && !this.props.frozen) {
 			const delta = timestamp - this.lastTime;
 			if (this.props.largeStation) {
-				// Large stations: stars are effectively stationary during the brief sim time.
+				this.scrollOffset += delta * 0.015; // ~15 px/s slow drift
 			} else if (this.props.duration > 0 && isFinite(this.props.duration)) {
 				const effectiveDuration =
 					this.props.duration /
