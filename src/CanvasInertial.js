@@ -84,13 +84,11 @@ class CanvasInertial extends Component {
 		d.units          = this.props.vars.units;
 		d.width          = ctx.canvas.clientWidth;
 		d.height         = ctx.canvas.clientHeight;
-		d.X_BUFFER       = d.width  / 10;
-		d.Y_BUFFER       = d.height / 8;
+		d.X_BUFFER       = d.width  / 20;
+		d.Y_BUFFER       = d.height / 20;
 		d.DRAWING_WIDTH  = d.width  - 2 * d.X_BUFFER;
 		d.DRAWING_HEIGHT = d.height - 2 * d.Y_BUFFER;
 		d.DELAY_BETWEEN_DRAWS = 2.5;
-		if (d.height < 350) { d.Y_BUFFER /= 1.5; }
-		else if (d.height > 500) { d.Y_BUFFER *= 1.25; }
 		this.namesp.dimensions = d;
 	}
 
@@ -264,7 +262,7 @@ function computeTransform(points, radius, dimensions) {
 		if (p.coinY > maxY) maxY = p.coinY;
 	}
 
-	const pad = radius * 0.15;
+	const pad = radius * 0.05;
 	minX -= pad; maxX += pad;
 	minY -= pad; maxY += pad;
 
