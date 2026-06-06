@@ -353,8 +353,8 @@ function draw_coin_trail(ctx, points, endFrame, transform) {
 	// Start dot
 	ctx.beginPath();
 	ctx.arc(start.x, start.y, 5, 0, 2 * Math.PI);
-	ctx.lineWidth   = 1;
-	ctx.strokeStyle = '#5c6870';
+	ctx.lineWidth   = 2;
+	ctx.strokeStyle = '#f0c040';
 	ctx.stroke();
 
 	if (endFrame < 1) return;
@@ -377,7 +377,8 @@ function draw_coin_trail(ctx, points, endFrame, transform) {
 		const end = toCanvas(points[limit].coinX, points[limit].coinY, transform);
 		ctx.beginPath();
 		ctx.arc(end.x, end.y, 5, 0, 2 * Math.PI);
-		ctx.strokeStyle = '#5c6870';
+		ctx.lineWidth   = 2;
+		ctx.strokeStyle = '#f0c040';
 		ctx.stroke();
 	}
 }
