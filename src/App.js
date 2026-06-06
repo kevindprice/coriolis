@@ -197,7 +197,7 @@ class App extends Component {
 			//Prevent unnecessary re-renders by not updating state on every resize.
 			pageShape: pageShape,
 			shouldShiftForBurger: (window.innerWidth > 600),
-			viewPair: 'earth-station',   // which two panels to show
+			viewPair: queryValues.viewPair,   // which two panels to show
 				//if the page is too skinny, like on mobile, then shrinking just looks ugly.
 			
 			//now calculated in the number crunching
@@ -781,7 +781,7 @@ return (
 		starSpeed={this.state.starSpeed}
 		percenttime={this.state.percenttime}
 		frozen={this.state.frozen}
-		largeStation={isLargeStation}
+		largeStation={isLargeStation || !showStation}
 	/>
 
 	{leftMenu}

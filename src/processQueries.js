@@ -2,23 +2,20 @@
 //so you can customize the link to the model with the variables you want.
 
 /*List of supported queries:
-	&units=feet
-	&units=imperial
-	&units=metric
-	&units=meters
-	&diameter=  (insert number after equals sign)
-	&radius=
-	&percenttime=
-	&startheight=
-	&percentgravity=
-	&speed=
-	&angle=
-	&statsMenu
-	&inputMenu
-	&thrownUp= (calculates speed needed to throw it this many feet "up" on Earth)
-	&throwHeight=
-	&frozen
-	&noPopUp
+	?units=feet  (also: imperial, ft, metric, meters, m)
+	?diameter=
+	?radius=
+	?percenttime=  (also: playback=)
+	?startheight=
+	?percentgravity=
+	?speed=
+	?angle=
+	?thrownUp=  (also: throwHeight=) — calculates speed needed to throw this high on Earth
+	?frozen
+	?statsMenu
+	?inputMenu
+	?noPopUp
+	?view=earth-inertial  (also: station-inertial; case-insensitive)
 */
 
 
@@ -48,157 +45,134 @@ var defaultMetric = {
 	accel_earth: 9.80665,
 	anglefromVertical:0,
 	speed: 4, //4.235,
-	percenttime: 100,	
-}
-
-function getQueryVariable(variable) {
-    var query = document.location.href;
-    var vars = query.split('&');
-    for (var i = 0; i < vars.length; i++) {
-        var pair = vars[i].split('=');
-        if (decodeURIComponent(pair[0]) === variable) {
-            if(pair.length===2)
-			{ return decodeURIComponent(pair[1]); }
-			else
-			{ return decodeURIComponent(pair[0]); }
-        }
-    }
-    //console.log('Query variable %s not found', variable);
+	percenttime: 100,
 }
 
 
 export function processQueryVariables()
 {
-	var queryflag=false;		//lets app know if there was a query variable
+	const params = new URLSearchParams(document.location.search);
 
-	//if(document.location.href.includes('&'))
-	//{ 			//don't skip the queries because this also sets the default variables.
-	  
+	// Helper: get a numeric param; returns NaN if absent or non-numeric.
+	function getNum(key) { const v = params.get(key); return v === null ? NaN : Number(v); }
+
+	// Helper: true if the param is present at all (flag-style ?key or ?key=anything).
+	function hasFlag(key) { return params.has(key); }
+
+	var queryflag = false;
+
 	//imperial or metric units
-	var units=getQueryVariable("units")
-	if(units==="feet" || units==="imperial" || units==="ft")
-		{ units="ft"; queryflag=true;  }
-	else if(units==="metric" || units==="meters" || units==="m")
-		{ units="m"; queryflag=true; }
-	else { units="ft" } //if the result is uninterpretable
-  
-	var defaults
-	if(units==="ft")
-		{ defaults = defaultImperial; }
-	else
-		{ defaults = defaultMetric; }
-  
-	//check for query variables!
-  
-	//set diameter
-	var diameter = Number(getQueryVariable("diameter"));
-	if (isNaN(diameter))
-		{ diameter=defaults.diameter}
-	else { queryflag=true; }
+	var unitsRaw = params.get("units");
+	var units;
+	if (unitsRaw === "feet" || unitsRaw === "imperial" || unitsRaw === "ft")
+		{ units = "ft"; queryflag = true; }
+	else if (unitsRaw === "metric" || unitsRaw === "meters" || unitsRaw === "m")
+		{ units = "m"; queryflag = true; }
+	else { units = "ft"; } //if the result is uninterpretable
 
-	//set radius
-	var radius = Number(getQueryVariable("radius"));
-	if (radius) { diameter=radius*2; queryflag=true; }
-  
+	var defaults = (units === "ft") ? defaultImperial : defaultMetric;
+
+	//set diameter
+	var diameter = getNum("diameter");
+	if (isNaN(diameter))
+		{ diameter = defaults.diameter; }
+	else { queryflag = true; }
+
+	//set radius (overrides diameter if present)
+	var radius = getNum("radius");
+	if (radius) { diameter = radius * 2; queryflag = true; }
 
 	//set playback speed
-	var percenttime = Number(getQueryVariable("percenttime"));
-	if(isNaN(percenttime)) percenttime = Number(getQueryVariable("playback"));
+	var percenttime = getNum("percenttime");
+	if (isNaN(percenttime)) percenttime = getNum("playback");
 	if (isNaN(percenttime))
-		{ percenttime=defaults.percenttime }
-	else { queryflag=true; }
-  
-	//set start  height
-	var startheight = Number(getQueryVariable("startheight"));
+		{ percenttime = defaults.percenttime; }
+	else { queryflag = true; }
+
+	//set starting height
+	var startheight = getNum("startheight");
 	if (isNaN(startheight))
-		{ startheight=defaults.startheight }
-	else { queryflag=true; }
+		{ startheight = defaults.startheight; }
+	else { queryflag = true; }
 
 	//set percent gravity
-	var gravity = Number(getQueryVariable("percentgravity"));
+	var gravity = getNum("percentgravity");
 	if (isNaN(gravity))
-		{ gravity=defaults.percentgravity }
-	else { queryflag=true; }
-  
+		{ gravity = defaults.percentgravity; }
+	else { queryflag = true; }
+
 	//set the speed
-	var speed = Number(getQueryVariable("speed"));
+	var speed = getNum("speed");
 	if (isNaN(speed))
-		{ speed=defaults.speed; }
-	else { queryflag=true; }
+		{ speed = defaults.speed; }
+	else { queryflag = true; }
 
 	//set the angle
-	var angle = Number(getQueryVariable("angle"));
+	var angle = getNum("angle");
 	if (isNaN(angle))
-		{ angle=defaults.anglefromVertical }
-	else { queryflag=true; }
+		{ angle = defaults.anglefromVertical; }
+	else { queryflag = true; }
 
 	//start with stats panel open
-	var statsOpen = getQueryVariable("statsMenu");
-	if(statsOpen==="true" || statsOpen==="statsMenu")
-		{ statsOpen=true; }
-	else { statsOpen=false; }
+	var statsOpen = hasFlag("statsMenu");
 
 	//start with left menu open
-	var leftMenu = getQueryVariable("inputMenu");
-	if(leftMenu==="true" || leftMenu==="inputMenu")
-		{ leftMenu=true; }
-	else { leftMenu=false; }
-	
-		//calculate radians from horizontal-right (the normal type of angle!)
-	var computedangle = (-1* angle * Math.PI / 180) + (Math.PI / 2);
-  
-	//weird case of "height it's thrown to on Earth." 
-	//Why am I supporting this feature?
-	var accel_earth = defaults.accel_earth
-	var thrownUp = Number(getQueryVariable("thrownUp"));
-	if (isNaN(thrownUp)) thrownUp = Number(getQueryVariable("throwHeight"));
-	if (isNaN(thrownUp)) thrownUp = defaults.thrownUp
-	else {
+	var leftMenu = hasFlag("inputMenu");
+
+	//calculate radians from horizontal-right (the normal type of angle!)
+	var computedangle = (-1 * angle * Math.PI / 180) + (Math.PI / 2);
+
+	//weird case of "height it's thrown to on Earth."
+	var accel_earth = defaults.accel_earth;
+	var thrownUp = getNum("thrownUp");
+	if (isNaN(thrownUp)) thrownUp = getNum("throwHeight");
+	if (isNaN(thrownUp)) {
+		thrownUp = defaults.thrownUp;
+	} else {
 		queryflag = true;
-		var relative_v_y = Math.sqrt( 2 * accel_earth * thrownUp );
-		
-		if(angle===0)
-		{	speed=relative_v_y	}
+		var relative_v_y = Math.sqrt(2 * accel_earth * thrownUp);
+		if (angle === 0)
+			{ speed = relative_v_y; }
 		else
-		{	speed=relative_v_y / Math.sin(computedangle) }
+			{ speed = relative_v_y / Math.sin(computedangle); }
 	}
-  
+
 	//start in a frozen state
-	var frozen = getQueryVariable("frozen");
-	if(frozen==="true" || frozen==="frozen")
-		{ frozen=true; /*queryflag=true;*/ } 
-	else if(frozen==="false")
-		{ frozen=false; /*queryflag=true;*/ }
-	else { if(!queryflag) frozen=false;  //don't freeze by default!
-			else frozen=false; }
-	var displayPopUp=true
-			//frozen state shouldn't lock the defaults
-			//thus I'm not doing the queryflag here
+	var frozen = false;
+	if (params.get("frozen") === "true" || hasFlag("frozen"))
+		{ frozen = true; }
+
+	var displayPopUp = true;
 
 	//if a query has been used, don't display the popup message.
-	if(	queryflag ||
-		getQueryVariable("noPopUp")==="noPopUp" ||
-		leftMenu || statsOpen	)
-			{displayPopUp=false;}
+	if (queryflag || hasFlag("noPopUp") || leftMenu || statsOpen)
+		{ displayPopUp = false; }
 
-	if(window.innerWidth > 750){ leftMenu=true;}
+	if (window.innerWidth > 750) { leftMenu = true; }
+
+	//set initial view pair (case-insensitive)
+	var viewRaw = (params.get("view") || '').toLowerCase().replace(/\s+/g, '');
+	var viewPair = 'earth-station'; // default
+	if (viewRaw === 'earth-inertial'   || viewRaw === 'earthinertial')   { viewPair = 'earth-inertial';   displayPopUp = false; }
+	if (viewRaw === 'station-inertial' || viewRaw === 'stationinertial') { viewPair = 'station-inertial'; displayPopUp = false; }
 
 	return {
-		diameter: diameter,
-		startheight: startheight,
-		units: units,
-		percentgravity: gravity,
-		thrownUp: thrownUp,
-		accel_earth: accel_earth,
-		anglefromVertical:angle,
-		speed: speed,
-		percenttime: percenttime,
-		
-		defaults: defaults,
-		leftMenu: leftMenu,
-		statsOpen: statsOpen,
-		frozen: frozen,
-		queryflag:queryflag,
-		PopUpOpen: displayPopUp,
-	}		
+		diameter:         diameter,
+		startheight:      startheight,
+		units:            units,
+		percentgravity:   gravity,
+		thrownUp:         thrownUp,
+		accel_earth:      accel_earth,
+		anglefromVertical: angle,
+		speed:            speed,
+		percenttime:      percenttime,
+
+		defaults:   defaults,
+		leftMenu:   leftMenu,
+		statsOpen:  statsOpen,
+		frozen:     frozen,
+		queryflag:  queryflag,
+		PopUpOpen:  displayPopUp,
+		viewPair:   viewPair,
+	}
 }
